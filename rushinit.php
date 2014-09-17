@@ -61,18 +61,18 @@ function ifcrush_install(){
 	$table_name = $wpdb->prefix . "ifc_bid";    
 	$sql = 	"CREATE TABLE $table_name(
 		bidstat int not null,
-		RusheeID		varchar(6) not null,
+		rusheeID		varchar(6) not null,
 		fratID varchar(3) not null,
-		FOREIGN KEY (RusheeID) references $rushee_table_name(netID),
+		FOREIGN KEY (rusheeID) references $rushee_table_name(netID),
 		FOREIGN KEY (fratID) references $frat_table_name(letters)
 	) engine = InnoDB;";
    dbDelta( $sql );
 
 	$table_name = $wpdb->prefix . "ifc_eventreg";    
 	$sql = 	"CREATE TABLE $table_name (
-		RusheeID		varchar(6) not null,
+		rusheeID		varchar(6) not null,
 		eventID int not null auto_increment,
-		FOREIGN KEY (RusheeID) references $rushee_table_name(netID),
+		FOREIGN KEY (rusheeID) references $rushee_table_name(netID),
 		FOREIGN KEY (eventID) references $event_table_name(eventID)
 	) engine = InnoDB;";
    	dbDelta( $sql );

@@ -175,7 +175,7 @@ function create_eventreg_table_row($event) {
 		<form method="post">
 			<tr>
 				<td> <!-- create a selection menu with Frats -->
-					<?php create_rushee_netIDs_menu($eventreg->RusheeID); ?>
+					<?php create_rushee_netIDs_menu($eventreg->rusheeID); ?>
 				</td>
 				<td> <!-- create a selection menu with Frats -->
 					<?php create_event_eventIDs_menu($eventreg->eventID); ?>
