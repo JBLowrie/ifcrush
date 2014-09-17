@@ -1,10 +1,10 @@
 <?php
 /**
- * @package IFCRushKL
+ * @package IFCRush
  * @version 0.1
  */
 /*
-Plugin Name: IFC Rush Kate's
+Plugin Name: IFC Rush
 Description: This plugin stores data for Frats and Rushees for rush events.  This is KLs version
 Author: Lowrie
 Version: 0.1
@@ -72,6 +72,7 @@ function ifcrush_install(){
 	$sql = 	"CREATE TABLE $table_name (
 		rusheeID		varchar(6) not null,
 		eventID int not null auto_increment,
+		PRIMARY KEY(rusheeID, eventID),
 		FOREIGN KEY (rusheeID) references $rushee_table_name(netID),
 		FOREIGN KEY (eventID) references $event_table_name(eventID)
 	) engine = InnoDB;";

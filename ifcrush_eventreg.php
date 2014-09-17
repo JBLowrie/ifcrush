@@ -111,7 +111,7 @@ function create_rushee_netIDs_menu($current){
 
 	$rushee_table_name = $wpdb->prefix . "ifc_rushee";    
 
-	$query = "SELECT netID FROM $rushee_table_name group by netID";
+	$query = "SELECT netID, lastName, firstName FROM $rushee_table_name";
 	$rushees = $wpdb->get_results($query);
 ?>
 	<select name="rusheeID">
@@ -119,9 +119,9 @@ function create_rushee_netIDs_menu($current){
 	foreach ($rushees as $rushee) {
 		//echo "comparing $guesttype $current";
 		if ($rushee->netID == $current) {
-			echo "<option value=\"$rushee->netID\" selected=\"selected\">$rushee->netID</option>\n";
+			echo "<option value=\"$rushee->netID\" selected=\"selected\">$rushee->lastName, $rushee->firstName</option>\n";
 		} else {
-			echo "<option value=\"$rushee->netID\">$rushee->netID</option>\n";
+			echo "<option value=\"$rushee->netID\">$rushee->lastName, $rushee->firstName</option>\n";
 		}
 	}
 ?>
@@ -133,7 +133,7 @@ function create_event_eventIDs_menu($current){
 
 	$event_table_name = $wpdb->prefix . "ifc_event";    
 
-	$query = "SELECT eventID FROM $event_table_name group by eventID";
+	$query = "SELECT eventID, title FROM $event_table_name group by eventID";
 	$events = $wpdb->get_results($query);
 ?>
 	<select name="eventID">
@@ -141,9 +141,9 @@ function create_event_eventIDs_menu($current){
 	foreach ($events as $event) {
 		//echo "comparing $guesttype $current";
 		if ($event->eventID == $current) {
-			echo "<option value=\"$event->eventID\" selected=\"selected\">$event->eventID</option>\n";
+			echo "<option value=\"$event->eventID\" selected=\"selected\">$event->title</option>\n";
 		} else {
-			echo "<option value=\"$event->eventID\">$event->eventID</option>\n";
+			echo "<option value=\"$event->eventID\">$event->title</option>\n";
 		}
 	}
 ?>
@@ -155,7 +155,7 @@ function create_eventreg_add_row() {
 	?>
 		<form method="post">
 			<tr>
-				<td> <!-- create a selection menu with Frats -->
+				<td> 
 					<?php create_rushee_netIDs_menu("   "); ?>
 				</td>
 				<td>
@@ -170,14 +170,14 @@ function create_eventreg_add_row() {
 	<?php
 }
 
-function create_eventreg_table_row($event) {
+function create_eventreg_table_row($eventreg) {
 	?>
 		<form method="post">
 			<tr>
-				<td> <!-- create a selection menu with Frats -->
+				<td> 
 					<?php create_rushee_netIDs_menu($eventreg->rusheeID); ?>
 				</td>
-				<td> <!-- create a selection menu with Frats -->
+				<td> 
 					<?php create_event_eventIDs_menu($eventreg->eventID); ?>
 				</td>
 				<td>			
