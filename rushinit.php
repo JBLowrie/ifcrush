@@ -12,6 +12,9 @@ Author URI: nope
 */
 global $ifcrush_db_version;
 $ifcrush_db_version = "1.0";
+global $debug;
+$debug = 0;
+
 
 /**
  * ifcrush_install() - creates the tables that store Frats/Rushees/Events
@@ -86,9 +89,13 @@ register_activation_hook( __FILE__, 'ifcrush_install' );
  ** available.
  **/
 function ifcrush_install_data() {
-	ifcrush_install_frats();
-	ifcrush_install_rushees();
-	ifcrush_install_events();
+global $debug;
+	if ($debug){
+		ifcrush_install_frats();
+		ifcrush_install_rushees();
+		ifcrush_install_events();
+		ifcrush_install_eventreg();
+	}
 }
 register_activation_hook( __FILE__, 'ifcrush_install_data' );
 

@@ -30,7 +30,10 @@ function ifcrush_install_frats() {
 
 }
 function ifcrush_frat_handle_form(){
-	//echo "<pre>"; print_r($_POST); echo "</pre>";
+	global $debug;
+	if ($debug){
+			echo "<pre>"; print_r($_POST); echo "</pre>";
+	}
 	
 	if (!isset($_POST['letters']))
 		return;

@@ -2,14 +2,32 @@
 /**
  **  This file contains all the support functions for the table ifcrush_eventreg
  **/
-
+function ifcrush_install_eventreg() {
+	$eventregs = array( 
+					array('rusheeID' => 'abc123', 	'eventID'=> 1),
+					array('rusheeID' => 'www456', 	'eventID'=> 2),
+					array('rusheeID' => 'www456', 	'eventID'=> 3),
+					array('rusheeID' => 'www456', 	'eventID'=> 4),
+				);
+	
+	foreach ($eventregs as $eventreg)
+   		addEventreg($eventreg);
+ 
+}
 
 function ifcrush_eventreg_handle_form() { 
 
-	echo "<pre>"; print_r($_POST); echo "</pre>";
+	global $debug;
+	if ($debug)
+		echo "<pre>"; print_r($_POST); echo "</pre>";
 	
 	if ( isset($_POST['addEventreg']) ){
 		// This is cuz addEvent doesn't take an eventID
+		// jbltodo - verify input using javascript
+		if (($_POST['rusheeID'] == "none") || ($_POST['eventID'] == "none")) {
+			echo "select a rushee and an event";
+			return;
+		}
 		$thiseventreg = array( 
 			'rusheeID' =>  $_POST['rusheeID'],
 			'eventID'  	=>  $_POST['eventID'],
@@ -17,15 +35,8 @@ function ifcrush_eventreg_handle_form() {
 		addEventreg($thiseventreg);
 	} else {
 			
-		//delete, update
-		if ( isset($_POST['updateEventreg']) ){
-			$thiseventreg = array( 
-				'rusheeID'	=>  $_POST['rusheeID'],
-				'eventID' =>  $_POST['eventID'],
-			); // put the form input into an array
-			updateEventreg($thiseventreg);
-			
-		} else if ( isset($_POST['deleteEventreg']) ){
+		//delete
+		if ( isset($_POST['deleteEventreg']) ){
 			$thiseventreg = array( 
 				'rusheeID'	=>  $_POST['rusheeID'],
 				'eventID' =>  $_POST['eventID'],
@@ -43,18 +54,11 @@ function addEventreg($thiseventreg) {
 	$rows_affected = $wpdb->insert($table_name, $thiseventreg);
 	
 	if ($rows_affected == 0) {
-		echo "INSERT ERROR for " . $thiseventreg['rusheeID']. $thiseventreg['eventID'] ;
+		echo "add event failed for rushee: " . $thiseventreg['rusheeID']. 
+					" event: " . $thiseventreg['eventID'] ;
 	}
 	return $rows_affected;
 } // adds a event to the table if addEvent is tagged
-
-function updateEventreg($thiseventreg) {
-	global $wpdb;
-	
-	$table_name = $wpdb->prefix . "ifc_eventreg";
-	$where = array('eventID' => $thiseventreg['eventID']);
-	$wpdb->update( $table_name, $thiseventreg, $where );
-} // updates a event with a matching netID if updateEvent is tagged
 
 function deleteEventreg($thiseventreg) {
 	global $wpdb;
@@ -116,6 +120,8 @@ function create_rushee_netIDs_menu($current){
 ?>
 	<select name="rusheeID">
 <?php
+	echo "<option value=\"none\">select rushee</option>\n";
+
 	foreach ($rushees as $rushee) {
 		//echo "comparing $guesttype $current";
 		if ($rushee->netID == $current) {
@@ -138,6 +144,7 @@ function create_event_eventIDs_menu($current){
 ?>
 	<select name="eventID">
 <?php
+	echo "<option value=\"none\">select event</option>\n";
 	foreach ($events as $event) {
 		//echo "comparing $guesttype $current";
 		if ($event->eventID == $current) {
@@ -181,7 +188,7 @@ function create_eventreg_table_row($eventreg) {
 					<?php create_event_eventIDs_menu($eventreg->eventID); ?>
 				</td>
 				<td>			
-					<input type="submit" name="updateEventreg" value="Update"/><input type="submit" name="deleteEventreg" value="Delete"/>
+					<input type="submit" name="deleteEventreg" value="Delete"/>
 				</td>
 			</tr>
 		</form>

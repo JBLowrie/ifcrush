@@ -16,7 +16,11 @@
  
 function ifcrush_install_events() {
 	$events = array( array('eventDate' => '2014-9-15', 	'title'=> 'Sunday Dinner 1',	'fratID' => "LXA"),
+					 array('eventDate' => '2014-9-22', 	'title'=> 'Sunday Dinner 2',	'fratID' => "LXA"),
+					 array('eventDate' => '2014-9-29', 	'title'=> 'Sunday Dinner 3',	'fratID' => "LXA"),
 					 array('eventDate' => '2014-9-15', 	'title'=> 'Sunday Dinner 1',	'fratID' => "SAE"),
+					 array('eventDate' => '2014-9-22', 	'title'=> 'Sunday Dinner 2',	'fratID' => "SAE"),
+					 array('eventDate' => '2014-9-29', 	'title'=> 'Sunday Dinner 3',	'fratID' => "SAE"),
 					);
 	
 	foreach ($events as $event)
@@ -25,7 +29,10 @@ function ifcrush_install_events() {
 
 function ifcrush_event_handle_form() { 
 
-	echo "<pre>"; print_r($_POST); echo "</pre>";
+	global $debug;
+	if ($debug){
+			echo "<pre>"; print_r($_POST); echo "</pre>";
+	}
 	
 	if ( isset($_POST['addEvent']) ){
 		// This is cuz addEvent doesn't take an eventID
