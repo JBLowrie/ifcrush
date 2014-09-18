@@ -13,7 +13,7 @@ Author URI: nope
 global $ifcrush_db_version;
 $ifcrush_db_version = "1.0";
 global $debug;
-$debug = 0;
+$debug = 1;
 
 
 /**
@@ -145,7 +145,9 @@ include 'ifcrush_event.php';  /** This has all the Rushee table support **/
 add_shortcode( 'ifcrush_display_event_table',   'ifcrush_display_event_table' );
 
 include 'ifcrush_eventreg.php';
-add_shortcode('ifcrush_display_eventreg_table', 'ifcrush_display_eventreg_table')
+add_shortcode('ifcrush_display_eventreg_table', 'ifcrush_display_eventreg_table');
 
+include 'ifcrush_reports.php';
+add_shortcode('ifcrush_report_rusheesbyfrat', 'ifcrush_report_rusheesbyfrat')
 
 ?>

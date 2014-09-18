@@ -192,7 +192,7 @@ function create_event_table_row($event) {
 					<input type="text" name="eventDate" size=20 value="<?php echo $event->eventDate; ?>"/>
 				</td>
 				<td>
-					<?php echo $event->eventID; ?><input type="text" name="title" size=20 value="<?php echo $event->title; ?>"/>
+					<input type="text" name="title" size=20 value="<?php echo $event->title; ?>"/>
 				</td>
 				<td> <!-- create a selection menu with Frats -->
 					<?php create_frat_letters_menu($event->fratID); ?>

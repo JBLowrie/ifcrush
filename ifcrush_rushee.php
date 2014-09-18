@@ -18,7 +18,7 @@ function ifcrush_install_rushees() {
 
 function ifcrush_rushee_handle_form() { 
 // 
-	global $debug;
+global $debug;
 	if ($debug){
 			echo "<pre>"; print_r($_POST); echo "</pre>";
 	}
