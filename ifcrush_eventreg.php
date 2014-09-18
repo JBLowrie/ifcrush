@@ -101,8 +101,8 @@ function create_eventreg_table_header() {
 	?>
 		<table>
 		<tr>
-			<th>RusheeID</th>
-			<th>eventID</th>
+			<th>Rushee</th>
+			<th>Fraternity-Event Title</th>
 		</tr>
 	<?php
 }
@@ -139,7 +139,7 @@ function create_event_eventIDs_menu($current){
 
 	$event_table_name = $wpdb->prefix . "ifc_event";    
 
-	$query = "SELECT eventID, title FROM $event_table_name group by eventID";
+	$query = "SELECT eventID, fratID, title FROM $event_table_name group by eventID";
 	$events = $wpdb->get_results($query);
 ?>
 	<select name="eventID">
@@ -148,7 +148,7 @@ function create_event_eventIDs_menu($current){
 	foreach ($events as $event) {
 		//echo "comparing $guesttype $current";
 		if ($event->eventID == $current) {
-			echo "<option value=\"$event->eventID\" selected=\"selected\">$event->title</option>\n";
+			echo "<option value=\"$event->eventID\" selected=\"selected\">$event->fratID-$event->title</option>\n";
 		} else {
 			echo "<option value=\"$event->eventID\">$event->title</option>\n";
 		}

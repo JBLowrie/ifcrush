@@ -148,6 +148,6 @@ include 'ifcrush_eventreg.php';
 add_shortcode('ifcrush_display_eventreg_table', 'ifcrush_display_eventreg_table');
 
 include 'ifcrush_reports.php';
-add_shortcode('ifcrush_report_rusheesbyfrat', 'ifcrush_report_rusheesbyfrat')
+add_shortcode('ifcrush_display_reports', 'ifcrush_display_reports')
 
 ?>
