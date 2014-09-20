@@ -1,0 +1,39 @@
+.frattable {
+	width: 100%;
+}
+.frattableheaders {
+	font-weight: bold;
+	padding:15px;
+	border: 10px solid red;
+}
+
+.fratrow  {
+	width: 100%;
+	padding:5px;
+}
+
+.fratid {
+	width: 40%;
+	float:left;
+	padding:5px;
+	border: 5px;
+}
+.rushchair {
+	width: 40%;
+	float:left;
+	padding:5px;
+	border: 5px;
+}
+.frataction {
+	width: 20%;
+	float:left;
+	padding:5px;
+	border: 5px;
+}
+.ifcrushbutton {
+	color: black;
+	width: 100%
+	background-color: purple;
+	padding:5px;
+	border: 5px solid brown;
+}

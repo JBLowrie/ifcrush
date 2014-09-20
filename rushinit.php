@@ -13,7 +13,7 @@ Author URI: nope
 global $ifcrush_db_version;
 $ifcrush_db_version = "1.0";
 global $debug;
-$debug = 1;
+$debug = 0;
 
 
 /**
@@ -131,6 +131,16 @@ function ifcrush_deactivate()
     $wpdb->query($sql);
 }
 register_deactivation_hook( __FILE__, 'ifcrush_deactivate');
+
+/**
+ * Add stylesheet to the page
+ **/
+function safely_add_stylesheet() {
+	wp_enqueue_style( 'prefix-style', plugins_url('css/fratstyle.css', __FILE__) );
+}
+add_action( 'wp_enqueue_scripts', 'safely_add_stylesheet' );
+
+
 
 /**
  * These are the functions to wire in the shortcodes
