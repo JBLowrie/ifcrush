@@ -5,7 +5,7 @@
  */
 /*
 Plugin Name: IFC Rush
-Description: This plugin stores data for Frats and Rushees for rush events.  This is KLs version
+Description: This plugin stores data for Frats and Rushees for rush events.
 Author: Lowrie
 Version: 0.1
 Author URI: nope
