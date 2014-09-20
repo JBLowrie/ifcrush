@@ -159,10 +159,10 @@ function create_frat_table_header(){
 	<div class="frattable">
 		<div class="fratrow">
 				<div class="fratid">
-					Frat
+					Fraternity (name and letters)
 				</div>
 				<div class="rushchair">
-					Rush chair
+					Rush chair (name and email)
 				</div>
 				<div class="frataction">
 					Action
@@ -182,19 +182,18 @@ function create_frat_add_row(){
 	<div class="fratrow">
 		<form method="post">
 			<div  class="fratid">
-				<input type="text" name="fullname" size="30" value="enter frat name"/><br>
-				<input type="text" name="letters" size="15" value="enter letters"/>
+				<input type="text" name="fullname" size="20" value="enter frat name"/>&nbsp;
+				<input type="text" name="letters" size="3" value=""/>
 			</div><!-- end fratid-->
 			<div class="rushchair">	
-				<input type="text" name="rushchair" size="20" value="enter rush chair"/><br>
-				<input type="text" name="email" size="20" value="renter ush chair email"/>
+				<input type="text" name="rushchair" size="15" value="enter rush chair"/>&nbsp;
+				<input type="text" name="email" size="25" value=" rush chair email"/>
 			</div><!-- end rushchair-->
-			<div class="frataction">	
-				<br>		
+			<div class="frataction">		
 				<input type="submit" name="addFrat" value="Add Frat"/>
 			</div><!-- end frataction-->
 		</form>
-	</div><!-- end fratrow-->
+	</div><br><!-- end fratrow-->
 <?php
 }
 
@@ -205,19 +204,19 @@ function create_frat_table_row($frat){
 	<div class="fratrow">
 		<form method="post">
 			<div class="fratid">
-				<input type="text" name="fullname"  size="25" value="<?php echo $frat->fullname; ?>"/>
+				<input type="text" name="fullname"  size="20" value="<?php echo $frat->fullname; ?>"/>&nbsp;
 				<input type="text" name="letters"   size="3" value="<?php echo $frat->letters; ?>"/>
 			</div><!-- end fratid-->
 			<div class="rushchair">
-				<input type="text" name="rushchair" size="20" value="<?php echo $frat->rushchair; ?>"/>
-				<input type="text" name="email" size="20" value="<?php echo $frat->email; ?>"/>
+				<input type="text" name="rushchair" size="15" value="<?php echo $frat->rushchair; ?>"/>&nbsp;
+				<input type="text" name="email" size="25" value="<?php echo $frat->email; ?>"/>
 			</div><!-- end rushchair-->
 			<div class="frataction">
-				<input type="submit" name="updateFrat" value="Update"/><br>
+				<input type="submit" name="updateFrat" value="Update"/>&nbsp;
 				<input type="submit" name="deleteFrat" value="Delete"/>
 			</div><!-- end frataction-->
 		</form>
-	</div><!-- end fratrow-->
+	</div><br><!-- end fratrow-->
 <?php
 }
 ?>

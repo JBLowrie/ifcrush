@@ -41,9 +41,9 @@ function ifcrush_install(){
    
 	$frat_table_name = $wpdb->prefix . "ifc_fraternity";    
 	$sql = 	"CREATE TABLE $frat_table_name (
-		fullname varchar(15) not null,
+		fullname varchar(25) not null,
 		letters varchar(3) not null,
-		rushchair varchar(15) not null,
+		rushchair varchar(25) not null,
 		email varchar(30) not null,
 		PRIMARY KEY(letters)
 	) engine = InnoDB;";
