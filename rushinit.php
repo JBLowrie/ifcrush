@@ -13,7 +13,7 @@ Author URI: nope
 global $ifcrush_db_version;
 $ifcrush_db_version = "1.0";
 global $debug;
-$debug = 0;
+$debug = 1;
 
 
 /**
@@ -136,7 +136,7 @@ register_deactivation_hook( __FILE__, 'ifcrush_deactivate');
  * Add stylesheet to the page
  **/
 function safely_add_stylesheet() {
-	wp_enqueue_style( 'prefix-style', plugins_url('css/fratstyle.css', __FILE__) );
+	wp_enqueue_style( 'prefix-style', plugins_url('css/ifcrushstyle.css', __FILE__) );
 }
 add_action( 'wp_enqueue_scripts', 'safely_add_stylesheet' );
 
