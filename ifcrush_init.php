@@ -25,20 +25,6 @@ function ifcrush_install(){
 	global $ifcrush_db_version;
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
    
-	$rushee_table_name = $wpdb->prefix . "ifc_rushee";    
-	$sql = 	"CREATE TABLE $rushee_table_name (
-				netID		varchar(6) not null,
-				firstName	varchar(15) not null,
-				lastName	varchar(15) not null,
-				rushstat	varchar(3) not null,
-				gradYear    int,
-				school		varchar(8) not null,
-				residence	varchar(10) not null,
-				email		varchar(30) not null,
-				PRIMARY KEY(netID)
-			) engine = InnoDB;";
-	dbDelta( $sql );
-   
 	$frat_table_name = $wpdb->prefix . "ifc_fraternity";    
 	$sql = 	"CREATE TABLE $frat_table_name (
 		fullname varchar(25) not null,
@@ -64,19 +50,17 @@ function ifcrush_install(){
 	$table_name = $wpdb->prefix . "ifc_bid";    
 	$sql = 	"CREATE TABLE $table_name(
 		bidstat int not null,
-		rusheeID		varchar(6) not null,
+		netID		varchar(6) not null,
 		fratID varchar(3) not null,
-		FOREIGN KEY (rusheeID) references $rushee_table_name(netID),
 		FOREIGN KEY (fratID) references $frat_table_name(letters)
 	) engine = InnoDB;";
    dbDelta( $sql );
 
 	$table_name = $wpdb->prefix . "ifc_eventreg";    
 	$sql = 	"CREATE TABLE $table_name (
-		rusheeID		varchar(6) not null,
+		pnm_netID		varchar(6) not null,
 		eventID int not null auto_increment,
-		PRIMARY KEY(rusheeID, eventID),
-		FOREIGN KEY (rusheeID) references $rushee_table_name(netID),
+		PRIMARY KEY(pnm_netID, eventID),
 		FOREIGN KEY (eventID) references $event_table_name(eventID)
 	) engine = InnoDB;";
    	dbDelta( $sql );
@@ -90,12 +74,11 @@ register_activation_hook( __FILE__, 'ifcrush_install' );
  **/
 function ifcrush_install_data() {
 global $debug;
-	if ($debug){
-		ifcrush_install_frats();
-		ifcrush_install_rushees();
+ 	if ($debug){
+ 		ifcrush_install_frats();
 		ifcrush_install_events();
-		ifcrush_install_eventreg();
-	}
+// 		ifcrush_install_eventreg();
+ 	}
 }
 register_activation_hook( __FILE__, 'ifcrush_install_data' );
 
@@ -107,22 +90,18 @@ function ifcrush_deactivate()
 {
     global $wpdb; 
     
-	/** drop this first before deleting rushee and event **/    
+	/** drop this first before deleting event **/    
 	$table_name = $wpdb->prefix . "ifc_eventreg";    
     $sql = "DROP TABLE IF EXISTS $table_name;";
     $wpdb->query($sql);
     
- 	/** drop this first before deleting rushee and frat **/       
+ 	/** drop this first before deleting frat **/       
     $table_name = $wpdb->prefix . "ifc_bid";    
     $sql = "DROP TABLE IF EXISTS $table_name;";
     $wpdb->query($sql);
     
     /** drop this first before deleting frat **/       
     $table_name = $wpdb->prefix . "ifc_event";    
-    $sql = "DROP TABLE IF EXISTS $table_name;";
-    $wpdb->query($sql);
-    
-	$table_name = $wpdb->prefix . "ifc_rushee";    
     $sql = "DROP TABLE IF EXISTS $table_name;";
     $wpdb->query($sql);
 
@@ -148,8 +127,8 @@ add_action( 'wp_enqueue_scripts', 'safely_add_stylesheet' );
 include 'ifcrush_frat.php';  /** This has all the Frat table support **/
 add_shortcode( 'ifcrush_display_frat_table',   'ifcrush_display_frat_table' );
 
-include 'ifcrush_rushee.php';  /** This has all the Rushee table support **/
-add_shortcode( 'ifcrush_display_rushee_table',   'ifcrush_display_rushee_table' );
+include 'ifcrush_pnm.php';  /** This has all the Rushee table support **/
+add_shortcode( 'ifcrush_display_pnms',   'ifcrush_display_pnms' );
 
 include 'ifcrush_event.php';  /** This has all the Rushee table support **/
 add_shortcode( 'ifcrush_display_event_table',   'ifcrush_display_event_table' );
@@ -159,4 +138,6 @@ add_shortcode('ifcrush_display_eventreg_table', 'ifcrush_display_eventreg_table'
 
 include 'ifcrush_reports.php';
 add_shortcode('ifcrush_display_reports', 'ifcrush_display_reports');
-?>
+
+include 'ifcrush_user_support.php';
+add_action( 'register_form', 'ifcrush_register_form' );?>

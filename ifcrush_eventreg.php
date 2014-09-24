@@ -3,15 +3,16 @@
  **  This file contains all the support functions for the table ifcrush_eventreg
  **/
 function ifcrush_install_eventreg() {
-	$eventregs = array( 
-					array('rusheeID' => 'abc123', 	'eventID'=> 1),
-					array('rusheeID' => 'www456', 	'eventID'=> 2),
-					array('rusheeID' => 'www456', 	'eventID'=> 3),
-					array('rusheeID' => 'www456', 	'eventID'=> 4),
-				);
-	
-	foreach ($eventregs as $eventreg)
-   		addEventreg($eventreg);
+// got rid of this when we shifted to using wp_users and wp_usermeta
+// 	$eventregs = array( 
+// 					array('rusheeID' => 'abc123', 	'eventID'=> 1),
+// 					array('rusheeID' => 'www456', 	'eventID'=> 2),
+// 					array('rusheeID' => 'www456', 	'eventID'=> 3),
+// 					array('rusheeID' => 'www456', 	'eventID'=> 4),
+// 				);
+// 	
+// 	foreach ($eventregs as $eventreg)
+//    		addEventreg($eventreg);
  
 }
 
@@ -24,12 +25,12 @@ function ifcrush_eventreg_handle_form() {
 	if ( isset($_POST['addEventreg']) ){
 		// This is cuz addEvent doesn't take an eventID
 		// jbltodo - verify input using javascript
-		if (($_POST['rusheeID'] == "none") || ($_POST['eventID'] == "none")) {
-			echo "select a rushee and an event";
+		if (($_POST['pnm_netID'] == "none") || ($_POST['eventID'] == "none")) {
+			echo "select a pnm and an event";
 			return;
 		}
 		$thiseventreg = array( 
-			'rusheeID' =>  $_POST['rusheeID'],
+			'pnm_netID' =>  $_POST['pnm_netID'],
 			'eventID'  	=>  $_POST['eventID'],
 		); // put the form input into an array
 		addEventreg($thiseventreg);
@@ -38,7 +39,7 @@ function ifcrush_eventreg_handle_form() {
 		//delete
 		if ( isset($_POST['deleteEventreg']) ){
 			$thiseventreg = array( 
-				'rusheeID'	=>  $_POST['rusheeID'],
+				'pnm_netID'	=>  $_POST['pnm_netID'],
 				'eventID' =>  $_POST['eventID'],
 			); // put the form input into an array
 			deleteEventreg($thiseventreg);
@@ -54,7 +55,7 @@ function addEventreg($thiseventreg) {
 	$rows_affected = $wpdb->insert($table_name, $thiseventreg);
 	
 	if ($rows_affected == 0) {
-		echo "add event failed for rushee: " . $thiseventreg['rusheeID']. 
+		echo "add event failed for pnm: " . $thiseventreg['pnm_netID']. 
 					" event: " . $thiseventreg['eventID'] ;
 	}
 	return $rows_affected;
@@ -76,13 +77,14 @@ function ifcrush_display_eventreg_table() {
 	global $wpdb;
 	
 	$eventreg_table_name = $wpdb->prefix . "ifc_eventreg";
-	$query = "SELECT * FROM $eventreg_table_name";
+	$event_table_name = $wpdb->prefix . "ifc_event";    
+	$query = "SELECT * FROM $eventreg_table_name as er join $event_table_name as e on e.eventID=er.eventID";
 	$alleventregs = $wpdb->get_results($query);
 	
 	if ($alleventregs) {
 		create_eventreg_table_header(); // make a table header
 		foreach ($alleventregs as $eventreg) { // populate the rows with db info
-			//echo "<pre>"; print_r($event); echo "</pre>";
+			//echo "<pre>"; print_r($eventreg); echo "</pre>";
 
 			create_eventreg_table_row($eventreg);
 		}
@@ -101,7 +103,7 @@ function create_eventreg_table_header() {
 	?>
 		<table>
 		<tr>
-			<th>Rushee</th>
+			<th>PNM</th>
 			<th>Fraternity-Event Title</th>
 		</tr>
 	<?php
@@ -110,24 +112,23 @@ function create_eventreg_table_footer() {
 	?></table><?php
 }
 
-function create_rushee_netIDs_menu($current){
-	global $wpdb;
 
-	$rushee_table_name = $wpdb->prefix . "ifc_rushee";    
-
-	$query = "SELECT netID, lastName, firstName FROM $rushee_table_name";
-	$rushees = $wpdb->get_results($query);
+function create_pnm_netIDs_menu($current){
+	$allpnms = get_all_pmns();
 ?>
-	<select name="rusheeID">
+	<select name="pnm_netID">
 <?php
-	echo "<option value=\"none\">select rushee</option>\n";
+	echo "<option value=\"none\">select PNM</option>\n";
 
-	foreach ($rushees as $rushee) {
-		//echo "comparing $guesttype $current";
-		if ($rushee->netID == $current) {
-			echo "<option value=\"$rushee->netID\" selected=\"selected\">$rushee->lastName, $rushee->firstName</option>\n";
+	foreach ($allpnms as $pnm) {
+		$pnm_netID = $pnm['ifcrush_netID']; 
+		$last_name = $pnm['last_name']; 
+		$first_name = $pnm['first_name']; 
+
+		if ($pnm_netID == $current) {
+			echo "<option value=\"$pnm_netID\" selected=\"selected\">$last_name, $first_name, $pnm_netID</option>\n";
 		} else {
-			echo "<option value=\"$rushee->netID\">$rushee->lastName, $rushee->firstName</option>\n";
+			echo "<option value=\"$pnm_netID\">$last_name, $first_name, $pnm_netID</option>\n";
 		}
 	}
 ?>
@@ -150,7 +151,7 @@ function create_event_eventIDs_menu($current){
 		if ($event->eventID == $current) {
 			echo "<option value=\"$event->eventID\" selected=\"selected\">$event->fratID-$event->title</option>\n";
 		} else {
-			echo "<option value=\"$event->eventID\">$event->title</option>\n";
+			echo "<option value=\"$event->eventID\">$event->fratID-$event->title</option>\n";
 		}
 	}
 ?>
@@ -163,7 +164,7 @@ function create_eventreg_add_row() {
 		<form method="post">
 			<tr>
 				<td> 
-					<?php create_rushee_netIDs_menu("   "); ?>
+					<?php create_pnm_netIDs_menu("   "); ?>
 				</td>
 				<td>
 					<?php create_event_eventIDs_menu("   "); ?>
@@ -182,12 +183,14 @@ function create_eventreg_table_row($eventreg) {
 		<form method="post">
 			<tr>
 				<td> 
-					<?php create_rushee_netIDs_menu($eventreg->rusheeID); ?>
+					<?php echo $eventreg->pnm_netID;/* kbl todo - make this a name and not a netID*/ ?>
 				</td>
 				<td> 
-					<?php create_event_eventIDs_menu($eventreg->eventID); ?>
+					<?php echo $eventreg->fratID."-".$eventreg->title; ?>
 				</td>
-				<td>			
+				<td>
+					<input type="hidden" name="eventID" value="<?php echo $eventreg->eventID; ?> ">		
+					<input type="hidden" name="pnm_netID" value="<?php echo $eventreg->pnm_netID; ?> ">		
 					<input type="submit" name="deleteEventreg" value="Delete"/>
 				</td>
 			</tr>

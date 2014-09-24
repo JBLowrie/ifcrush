@@ -48,15 +48,14 @@ function ifcrush_report_handle_form($frat) {
 /** This is a report function.  A function should be added for 
  ** each desired report, and the appropriate case should be added to handle form.
  **/ 
-function ifcrush_report_display_rusheesbyfrat($frat) {
+function ifcrush_report_display_pnmsbyfrat($frat) {
 
 	global $wpdb;
 
-	$rushee_table_name 	= $wpdb->prefix . "ifc_rushee";
 	$event_table_name 	= $wpdb->prefix . "ifc_event";
 	$eventreg_table_name = $wpdb->prefix . "ifc_eventreg";
 
-	$query = "SELECT * FROM $rushee_table_name join $eventreg_table_name on netID=rusheeID
+	$query = "SELECT * FROM $eventreg_table_name 
 					JOIN $event_table_name on 
 					$eventreg_table_name.eventID = $event_table_name.eventID
 					where fratID='$frat'";
@@ -73,7 +72,7 @@ function ifcrush_report_display_rusheesbyfrat($frat) {
 	else { 
 		?><h2>No results!</h2><?php
 	}
-} // updates a rushee with a matching netID if updateRushee is tagged
+} 
 
 function ifcrush_create_frat_letter_menu($current){
 	global $wpdb;
@@ -98,5 +97,4 @@ function ifcrush_create_frat_letter_menu($current){
 	</select>
 <?php
 }
-
 ?>
