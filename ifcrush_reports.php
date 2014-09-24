@@ -6,6 +6,11 @@
 /**  This is the short code ifcrush_report_rusheesbyfrat entry point **/
 function ifcrush_display_reports(){
 
+	if (!is_user_logged_in()) {
+		echo "sorry you must be logged use reporting";
+		return;
+	}
+	
 	ifcrush_display_report_form((isset($_POST['letters'])) ? $_POST['letters']: "");
 	
 	if (isset($_POST['letters'])) 
@@ -29,7 +34,7 @@ function ifcrush_report_handle_form($frat) {
 			echo "<pre>"; print_r($_POST); echo "</pre>";
 	}
 	
-	ifcrush_report_display_rusheesbyfrat($frat);
+	ifcrush_report_display_pnmsbyfrat($frat);
 	
 // 	switch($_POST['']) {
 // 		case 'eventsbyfrat':
@@ -61,11 +66,12 @@ function ifcrush_report_display_pnmsbyfrat($frat) {
 					where fratID='$frat'";
 					
 	$allresults = $wpdb->get_results($query);
+	//echo "<pre>"; print_r($allresults); echo "</pre>";
 	
 	if ($allresults) {
 		foreach ($allresults as $result) {
 		?>
-			<div class="reportrow"><?php echo "$result->fratID-$result->title $result->firstName $result->lastName"; ?></div>
+			<div class="reportrow"><?php echo "$result->fratID-$result->title $result->pnm_netID"; ?></div>
 		<?php
 		}
 	} 

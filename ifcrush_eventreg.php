@@ -2,20 +2,43 @@
 /**
  **  This file contains all the support functions for the table ifcrush_eventreg
  **/
-function ifcrush_install_eventreg() {
-// got rid of this when we shifted to using wp_users and wp_usermeta
-// 	$eventregs = array( 
-// 					array('rusheeID' => 'abc123', 	'eventID'=> 1),
-// 					array('rusheeID' => 'www456', 	'eventID'=> 2),
-// 					array('rusheeID' => 'www456', 	'eventID'=> 3),
-// 					array('rusheeID' => 'www456', 	'eventID'=> 4),
-// 				);
-// 	
-// 	foreach ($eventregs as $eventreg)
-//    		addEventreg($eventreg);
- 
-}
 
+/**
+ * Display event table - short code entry point
+ **/
+function ifcrush_display_eventreg_table() {
+
+	if (!is_user_logged_in()) {
+		echo "sorry you must be logged in to see and add event registrations";
+		return;
+	}
+
+	ifcrush_eventreg_handle_form(); // handle updates, adds, deletes
+	
+	global $wpdb;
+	
+	$eventreg_table_name = $wpdb->prefix . "ifc_eventreg";
+	$event_table_name = $wpdb->prefix . "ifc_event";    
+	$query = "SELECT * FROM $eventreg_table_name as er join $event_table_name as e on e.eventID=er.eventID";
+	$alleventregs = $wpdb->get_results($query);
+	
+	if ($alleventregs) {
+		create_eventreg_table_header(); // make a table header
+		foreach ($alleventregs as $eventreg) { // populate the rows with db info
+			//echo "<pre>"; print_r($eventreg); echo "</pre>";
+
+			create_eventreg_table_row($eventreg);
+		}
+		create_eventreg_add_row();
+		create_eventreg_table_footer(); // end the table
+	} 
+	else { 
+		?><h2>No event regs!</h2><?php
+		create_eventreg_table_header(); // make a table header
+		create_eventreg_add_row();
+		create_eventreg_table_footer(); // end the table
+	}
+}
 function ifcrush_eventreg_handle_form() { 
 
 	global $debug;
@@ -69,35 +92,7 @@ function deleteEventreg($thiseventreg) {
 } // deletes a event if deleteEvent is tagged
 
 
-//Display event table
-function ifcrush_display_eventreg_table() {
 
-	ifcrush_eventreg_handle_form(); // handle updates, adds, deletes
-	
-	global $wpdb;
-	
-	$eventreg_table_name = $wpdb->prefix . "ifc_eventreg";
-	$event_table_name = $wpdb->prefix . "ifc_event";    
-	$query = "SELECT * FROM $eventreg_table_name as er join $event_table_name as e on e.eventID=er.eventID";
-	$alleventregs = $wpdb->get_results($query);
-	
-	if ($alleventregs) {
-		create_eventreg_table_header(); // make a table header
-		foreach ($alleventregs as $eventreg) { // populate the rows with db info
-			//echo "<pre>"; print_r($eventreg); echo "</pre>";
-
-			create_eventreg_table_row($eventreg);
-		}
-		create_eventreg_add_row();
-		create_eventreg_table_footer(); // end the table
-	} 
-	else { 
-		?><h2>No event regs!</h2><?php
-		create_eventreg_table_header(); // make a table header
-		create_eventreg_add_row();
-		create_eventreg_table_footer(); // end the table
-	}
-}
 
 function create_eventreg_table_header() {
 	?>

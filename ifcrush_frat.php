@@ -3,6 +3,37 @@
  **  This file contains all the support functions for the table ifcrush_frat
  **/
  
+/** 
+ * ifcrush_display_frat_table  shortcode entry point
+ **/
+function ifcrush_display_frat_table(){
+
+	if (!is_user_logged_in()) {
+		echo "sorry you must be logged in to see and edit fraternities";
+		return;
+	}
+	/** handle the form if submitted, and display for next time **/
+	ifcrush_frat_handle_form();
+	//display_add_frat_form();
+	
+	global $wpdb;	   
+	
+	$frat_table_name = $wpdb->prefix . "ifc_fraternity";    
+	$query= " SELECT * FROM $frat_table_name";
+	$allfrats = $wpdb->get_results( $query );
+
+	if ( $allfrats ) {
+		create_frat_table_header();
+		foreach ( $allfrats as $frat ){
+			create_frat_table_row($frat);
+		}	
+		create_frat_add_row();
+		create_frat_table_footer();
+	} else {
+		?><h2>No Frats!</h2><?php
+	}
+}
+ 
 /** initial array of fraternities **/
 /** ifcrush_install_frats() - HACK to put in some sample data.  
  ** Should be deleted or actual frat data added once actual data is available. jbltodo
@@ -129,30 +160,6 @@ function insertFrat(){
  			'email'	    => $_POST['email'],
 		);
    		add_frat($thisfrat);
-}
-
-function ifcrush_display_frat_table(){
-
-	/** handle the form if submitted, and display for next time **/
-	ifcrush_frat_handle_form();
-	//display_add_frat_form();
-	
-	global $wpdb;	   
-	
-	$frat_table_name = $wpdb->prefix . "ifc_fraternity";    
-	$query= " SELECT * FROM $frat_table_name";
-	$allfrats = $wpdb->get_results( $query );
-
-	if ( $allfrats ) {
-		create_frat_table_header();
-		foreach ( $allfrats as $frat ){
-			create_frat_table_row($frat);
-		}	
-		create_frat_add_row();
-		create_frat_table_footer();
-	} else {
-		?><h2>No Frats!</h2><?php
-	}
 }
 function create_frat_table_header(){
 	?>

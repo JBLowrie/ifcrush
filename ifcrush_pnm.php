@@ -21,6 +21,11 @@ function ifcrush_display_pnms() {
 	
 	$allpnms = get_all_pmns();
 	
+	if (!is_user_logged_in()) {
+		echo "sorry you must be logged in to see pnms";
+		return;
+	}
+	
 		if ($allpnms) {
 			create_pnm_table_header(); // make a table header
 			foreach ($allpnms as $pnm) { 

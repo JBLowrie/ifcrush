@@ -13,7 +13,45 @@
 // 		FOREIGN KEY(fratID) references $frat_table_name(letters)
 // 	) engine = InnoDB;";
 
- 
+/** 
+ * Display events entry point
+ **/
+function ifcrush_display_event_table() {
+
+	if (!is_user_logged_in()) {
+		echo "sorry you must be logged in to see and add events";
+		return;
+	}
+		
+	ifcrush_event_handle_form(); // handle updates, adds, deletes
+	
+	global $wpdb;
+	
+	$event_table_name = $wpdb->prefix . "ifc_event";
+	$query = "SELECT * FROM $event_table_name";
+	$allevents = $wpdb->get_results($query);
+	
+	if ($allevents) {
+		create_event_table_header(); // make a table header
+		foreach ($allevents as $event) { // populate the rows with db info
+			//echo "<pre>"; print_r($event); echo "</pre>";
+
+			create_event_table_row($event);
+		}
+		create_event_add_row();
+		create_event_table_footer(); // end the table
+	} 
+	else { 
+		?><h2>No events!</h2><?php
+		create_event_table_header(); // make a table header
+		create_event_add_row();
+		create_event_table_footer(); // end the table
+	}
+}
+
+/**
+ *  dummied up data
+ **/
 function ifcrush_install_events() {
 	$events = array( array('eventDate' => '2014-9-15', 	'title'=> 'Sunday Dinner 1',	'fratID' => "LXA"),
 					 array('eventDate' => '2014-9-22', 	'title'=> 'Sunday Dinner 2',	'fratID' => "LXA"),
@@ -95,34 +133,6 @@ function deleteEvent($thisevent) {
 } // deletes a event if deleteEvent is tagged
 
 
-//Display event table
-function ifcrush_display_event_table() {
-
-	ifcrush_event_handle_form(); // handle updates, adds, deletes
-	
-	global $wpdb;
-	
-	$event_table_name = $wpdb->prefix . "ifc_event";
-	$query = "SELECT * FROM $event_table_name";
-	$allevents = $wpdb->get_results($query);
-	
-	if ($allevents) {
-		create_event_table_header(); // make a table header
-		foreach ($allevents as $event) { // populate the rows with db info
-			//echo "<pre>"; print_r($event); echo "</pre>";
-
-			create_event_table_row($event);
-		}
-		create_event_add_row();
-		create_event_table_footer(); // end the table
-	} 
-	else { 
-		?><h2>No events!</h2><?php
-		create_event_table_header(); // make a table header
-		create_event_add_row();
-		create_event_table_footer(); // end the table
-	}
-}
 
 function create_event_table_header() {
 	?>
