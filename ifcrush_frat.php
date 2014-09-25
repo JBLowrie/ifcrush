@@ -127,8 +127,8 @@ function addFrat($thisfrat){
 
 	$user_id = username_exists( $thisfrat['letters'] );
 	if ( !$user_id and email_exists($thisfrat['email']) == false ) {
-		$random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
-		$user_id = wp_create_user( $thisfrat['letters'], $random_password, $thisfrat['email'] );
+		//$random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
+		$user_id = wp_create_user( $thisfrat['letters'], strtolower($thisfrat['letters']), $thisfrat['email'] );
     	update_user_meta( $user_id, 'first_name', 'Mr.'  );
     	update_user_meta( $user_id, 'last_name', $thisfrat['fullname']  );
     	update_user_meta( $user_id, 'ifcrush_frat_fullname', $thisfrat['fullname']  );   

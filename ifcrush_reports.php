@@ -11,22 +11,29 @@ function ifcrush_display_reports(){
 		return;
 	}
 	
-	ifcrush_display_pnmsbyfratevent_form();
+	$current_user = wp_get_current_user();
 	
-	//ifcrush_display_eventsbypnms_form();
-
-	
-	if (isset($_POST['reportype']))
-		ifcrush_report_handle_form();
+	if (is_user_an_rc($current_user)){
+		/* pass user info to reporting function so only
+		 * that frat's info is displayed
+		 */
+		$fratLetters =  get_frat_letters($current_user);
+		ifcrush_display_frat_events($fratLetters);
+	} else {
+		/* assume its an admin */
+		ifcrush_display_events_by_frat_form(isset($_POST['letters'])?$_POST['letters']:"" );
+		if (isset($_POST['reportype']))
+			ifcrush_report_handle_form();
+	}
 
 }
-function ifcrush_display_eventsbypnms_form(){
-	$pnms = get_all_pmns();
+
+function ifcrush_display_eventsbypnms_form($frat_letters){
 ?>
 	<legend>PNMS by Fraternity Event </legend>
 	<fieldset>
 	<form method="post">
-		<?php ifcrush_create_frat_letter_menu($frat_letters); ?>
+		<?php ifcrush_create_frat_menu($frat_letters); ?>
 		<input type="hidden" name="reportype" value="pnmsbyfratevent" />
 		<input type="submit" value="Create Report"/>
 	</form>
@@ -34,14 +41,13 @@ function ifcrush_display_eventsbypnms_form(){
 <?php
 }
 
-function ifcrush_display_pnmsbyfratevent_form(){
-	$frat_letters =(isset($_POST['letters'])) ? $_POST['letters']: "";
+function ifcrush_display_events_by_frat_form($frat_letters){
 ?>
-	<legend>Fraternity Event by PNMS</legend>
+	<legend>Select a Fraternity to display their events</legend>
 	<fieldset>
 	<form method="post">
-		<?php ifcrush_create_frat_letter_menu($frat_letters); ?>
-		<input type="hidden" name="reportype" value="pnmsbyfratevent" />
+		<?php ifcrush_create_frat_menu($frat_letters); ?>
+		<input type="hidden" name="reportype" value="displayfratevents" />
 		<input type="submit" value="Create Report"/>
 	</form>
 	</fieldset>
@@ -58,8 +64,8 @@ function ifcrush_report_handle_form() {
 		case 'pnmsbyfratevent':
 			ifcrush_report_pnmsbyfratevent($_POST['letters']);
 			break;
-		case 'fratsandevents':
-			ifcrush_report_fratsandevents($_POST['frat']);
+		case 'displayfratevents':
+			ifcrush_display_frat_events($_POST['letters']);
 			break;
 		default:
 			echo "no report specified";
@@ -67,12 +73,34 @@ function ifcrush_report_handle_form() {
 	
 } 
 
+function ifcrush_display_frat_events($frat) {
+
+	global $wpdb;
+
+	$event_table_name 	= $wpdb->prefix . "ifc_event";
+	$eventreg_table_name = $wpdb->prefix . "ifc_eventreg";
+
+	$query = "SELECT * FROM $event_table_name where fratID='$frat'";
+					
+	$allresults = $wpdb->get_results($query);
+	//echo "<pre>"; print_r($allresults); echo "</pre>";
+	
+	if ($allresults) {
+		foreach ($allresults as $result) {
+		?>
+			<div class="reportrow"><?php echo "$result->fratID $result->title "; ?></div>
+		<?php
+		}
+	} 
+	else { 
+		?><h2>No results!</h2><?php
+	}
+} 
 
 /** This is a report function.  A function should be added for 
  ** each desired report, and the appropriate case should be added to handle form.
  **/ 
 function ifcrush_report_pnmsbyfratevent($frat) {
-
 	global $wpdb;
 
 	$event_table_name 	= $wpdb->prefix . "ifc_event";
@@ -99,23 +127,21 @@ function ifcrush_report_pnmsbyfratevent($frat) {
 	}
 } 
 
-function ifcrush_create_frat_letter_menu($current){
-	global $wpdb;
-	$frat_table_name = $wpdb->prefix . "ifc_fraternity";    
-
-	$query = "SELECT letters, fullname FROM $frat_table_name group by letters";
-					
-	$frats = $wpdb->get_results($query);
+/** creates html for a selection menu for frats
+ **/
+function ifcrush_create_frat_menu($current){
+	$frats = get_all_frats();
 ?>
 	<select name="letters">
 <?php
 	echo "<option value=\"none\">select fraternity</option>\n";
 	foreach ($frats as $frat) {
-		//echo "comparing $guesttype $current";
-		if ($frat->letters == $current) {
-			echo "<option value=\"$frat->letters\" selected=\"selected\">$frat->fullname</option>\n";
+		$ifcrush_frat_letters = $frat['ifcrush_frat_letters'];
+		$ifcrush_frat_fullname = $frat['ifcrush_frat_fullname'];
+		if ($ifcrush_frat_letters == $current) {
+			echo "<option value=\"$ifcrush_frat_letters\" selected=\"selected\">$ifcrush_frat_fullname</option>\n";
 		} else {
-			echo "<option value=\"$frat->letters\">$frat->fullname</option>\n";
+			echo "<option value=\"$ifcrush_frat_letters\">$ifcrush_frat_fullname</option>\n";
 		}
 	}
 ?>

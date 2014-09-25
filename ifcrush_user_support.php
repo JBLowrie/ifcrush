@@ -80,3 +80,36 @@ function ifcrush_user_register( $user_id ) {
     	update_user_meta( $user_id, 'ifcrush_affiliation', 'none'  );
     }
 }
+function is_user_an_rc($current_user){
+	$key = 'ifcrush_role';
+	$single = true;
+	$user_role = get_user_meta($current_user->ID, $key, $single ); 
+	return($user_role == 'rc');
+
+}
+
+/*
+ * possibly could use this only and not check for rc, because only rcs have frat letters
+ * and all rcs must have frat letters
+ */
+function get_frat_letters($current_user){
+	$key = 'ifcrush_frat_letters';
+	$single = true;
+	$frat_letters = get_user_meta($current_user->ID, $key, $single ); 
+	return($frat_letters);
+
+}
+
+function is_user_an_pnm($current_user){
+	$key = 'ifcrush_role';
+	$single = true;
+	$user_role = get_user_meta($current_user->ID, $key, $single ); 
+	return($user_role == 'pnm');
+}
+
+function is_user_an_ifc_admin($current_user){
+	$key = 'ifcrush_role';
+	$single = true;
+	$user_role = get_user_meta($current_user->ID, $key, $single ); 
+	return($user_role == 'ifc_admin');
+}
