@@ -172,19 +172,7 @@ function create_frat_table_header(){
 					Fraternity
 				</div>
 				<div class="rushchair">
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-					Recruitment chair (name and email)
-=======
-					Rush chair
->>>>>>> FETCH_HEAD
-=======
-					Rush chair
->>>>>>> FETCH_HEAD
-=======
-					Rush chair
->>>>>>> FETCH_HEAD
+					Recruitment chair
 				</div>
 				<div class="frataction">
 					Action
