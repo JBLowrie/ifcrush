@@ -20,6 +20,8 @@ function ifcrush_display_frat_table(){
 	
 	$allfrats = get_all_frats();
 
+	//echo "<pre>"; print_r($allfrats); echo "</pre>";
+
 	if ( $allfrats ) {
 		create_frat_table_header();
 		foreach ( $allfrats as $frat ){
@@ -40,7 +42,8 @@ function ifcrush_display_frat_table(){
 function get_all_frats(){
 
 	global $wpdb;		
-	$query = "select * from wp_usermeta where meta_key IN 
+	$table_name = $wpdb->prefix . "usermeta";
+	$query = "select * from $table_name where meta_key IN 
  				('ifcrush_role', 'first_name', 'last_name', 'ifcrush_frat_letters', 'ifcrush_frat_fullname')";
 
 	$all_meta_raw = $wpdb->get_results($query);

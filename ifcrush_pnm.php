@@ -69,7 +69,8 @@ function create_pnm_table_footer(){
 function get_all_pmns(){
 
 	global $wpdb;		
-	$query = "select * from wp_usermeta where meta_key IN 
+	$table_name = $wpdb->prefix . "usermeta";
+	$query = "select * from $table_name where meta_key IN 
  				('ifcrush_netID', 'ifcrush_role', 'first_name', 'last_name',
  				'ifcrush_residence','ifcrush_school','ifcrush_yog',
  				'ifcrush_affiliation')";
