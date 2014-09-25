@@ -24,17 +24,6 @@ function ifcrush_install(){
 	global $wpdb;
 	global $ifcrush_db_version;
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-   
-	$frat_table_name = $wpdb->prefix . "ifc_fraternity";    
-	$sql = 	"CREATE TABLE $frat_table_name (
-		fullname varchar(25) not null,
-		letters varchar(3) not null,
-		rushchair varchar(25) not null,
-		email varchar(30) not null,
-		PRIMARY KEY(letters)
-	) engine = InnoDB;";
-
-   	dbDelta( $sql );
 
 	$event_table_name = $wpdb->prefix . "ifc_event";    
 	$sql = 	"CREATE TABLE $event_table_name (
@@ -42,8 +31,7 @@ function ifcrush_install(){
 		title varchar(30) not null,
 		eventID int not null auto_increment,
 		fratID varchar(3) not null,
-		PRIMARY KEY(eventID),
-		FOREIGN KEY(fratID) references $frat_table_name(letters)
+		PRIMARY KEY(eventID)
 	) engine = InnoDB;";
    dbDelta( $sql );
 
@@ -51,8 +39,7 @@ function ifcrush_install(){
 	$sql = 	"CREATE TABLE $table_name(
 		bidstat int not null,
 		netID		varchar(6) not null,
-		fratID varchar(3) not null,
-		FOREIGN KEY (fratID) references $frat_table_name(letters)
+		fratID		varchar(3) not null
 	) engine = InnoDB;";
    dbDelta( $sql );
 
@@ -105,9 +92,6 @@ function ifcrush_deactivate()
     $sql = "DROP TABLE IF EXISTS $table_name;";
     $wpdb->query($sql);
 
-	$table_name = $wpdb->prefix . "ifc_fraternity";    
-    $sql = "DROP TABLE IF EXISTS $table_name;";
-    $wpdb->query($sql);
 }
 register_deactivation_hook( __FILE__, 'ifcrush_deactivate');
 

@@ -13,26 +13,58 @@ function ifcrush_display_frat_table(){
 		return;
 	}
 	/** handle the form if submitted, and display for next time **/
-	ifcrush_frat_handle_form();
+	//ifcrush_frat_handle_form();
 	//display_add_frat_form();
 	
 	global $wpdb;	   
 	
-	$frat_table_name = $wpdb->prefix . "ifc_fraternity";    
-	$query= " SELECT * FROM $frat_table_name";
-	$allfrats = $wpdb->get_results( $query );
+	$allfrats = get_all_frats();
 
 	if ( $allfrats ) {
 		create_frat_table_header();
 		foreach ( $allfrats as $frat ){
 			create_frat_table_row($frat);
 		}	
-		create_frat_add_row();
 		create_frat_table_footer();
 	} else {
 		?><h2>No Frats!</h2><?php
 	}
 }
+/**
+ *  I want an array of arrays (or objects) where each element is a pmn with their name
+ *  and netID.  I'd like to use a select so there is only one query.
+ *  So, I get all the meta data for users (I don't need the user table)
+ *  and create one array element for each user with meta data.
+ *  Then I copy just the users I want into another array. 
+  **/
+function get_all_frats(){
+
+	global $wpdb;		
+	$query = "select * from wp_usermeta where meta_key IN 
+ 				('ifcrush_role', 'first_name', 'last_name', 'ifcrush_frat_letters', 'ifcrush_frat_fullname')";
+
+	$all_meta_raw = $wpdb->get_results($query);
+	
+	/* get all the users */
+	$allusers=array();
+	foreach ($all_meta_raw as $meta){
+		$allusers[$meta->user_id][$meta->meta_key] = $meta->meta_value;
+	}
+
+	/* now just the ones we want */
+	$allfrats=array();
+	foreach ($allusers as $user){
+		if (is_rc($user)) {
+			array_push($allfrats, $user);
+		}
+	}
+
+	return($allfrats);
+}
+function is_rc($user){
+	return isset($user['ifcrush_role']) && ($user['ifcrush_role'] == 'rc');
+}
+
  
 /** initial array of fraternities **/
 /** ifcrush_install_frats() - HACK to put in some sample data.  
@@ -40,21 +72,21 @@ function ifcrush_display_frat_table(){
  **/
 function ifcrush_install_frats() {
 	$frats = array( 
-	array('fullname' => 'Alpha Epsilon Pi', 	'letters'=> 'AEP',	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Delta Chi', 			'letters'=> 'DX', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Delta Tau Delta', 		'letters'=> 'DTD', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Evans Scholars', 		'letters'=> 'ES', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Lambda Chi Alpha', 	'letters'=> 'LXA', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Phi Delta Theta', 		'letters'=> 'FDT', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Phi Gamma Delta', 		'letters'=> 'FJ', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Phi Kappa Psi', 		'letters'=> 'PKP', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Phi Mu Alpha', 		'letters'=> 'PMA', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Pi Kappa Alpha', 		'letters'=> 'PKA', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Sigma Alpha Epsilon', 	'letters'=> 'SAE', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Sigma Chi', 			'letters'=> 'SX', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Sigma Phi Epsilon', 	'letters'=> 'SPE', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Theta Chi', 			'letters'=> 'TX', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"),
-	array('fullname' => 'Zeta Beta Tau', 		'letters'=> 'ZBT', 	'rushchair' => 'mr. tbd', 'email' =>"tbd@u.northwestern.edu"));
+	array('fullname' => 'Alpha Epsilon Pi', 	'letters'=> 'AEP',	'email' =>"AEP@u.northwestern.edu"),
+	array('fullname' => 'Delta Chi', 			'letters'=> 'DX',	'email' =>"DX@u.northwestern.edu"),
+	array('fullname' => 'Delta Tau Delta', 		'letters'=> 'DTD',	'email' =>"DTD@u.northwestern.edu"),
+	array('fullname' => 'Evans Scholars', 		'letters'=> 'ES',	'email' =>"ES@u.northwestern.edu"),
+	array('fullname' => 'Lambda Chi Alpha', 	'letters'=> 'LXA',	'email' =>"LXA@u.northwestern.edu"),
+	array('fullname' => 'Phi Delta Theta', 		'letters'=> 'FDT',	'email' =>"FDT@u.northwestern.edu"),
+	array('fullname' => 'Phi Gamma Delta', 		'letters'=> 'FJ', 	'email' =>"FJ@u.northwestern.edu"),
+	array('fullname' => 'Phi Kappa Psi', 		'letters'=> 'PKP', 	'email' =>"PKP@u.northwestern.edu"),
+	array('fullname' => 'Phi Mu Alpha', 		'letters'=> 'PMA', 	'email' =>"PMA@u.northwestern.edu"),
+	array('fullname' => 'Pi Kappa Alpha', 		'letters'=> 'PKA', 	'email' =>"PKA@u.northwestern.edu"),
+	array('fullname' => 'Sigma Alpha Epsilon', 	'letters'=> 'SAE', 	'email' =>"SAE@u.northwestern.edu"),
+	array('fullname' => 'Sigma Chi', 			'letters'=> 'SX', 	'email' =>"SX@u.northwestern.edu"),
+	array('fullname' => 'Sigma Phi Epsilon', 	'letters'=> 'SPE', 	'email' =>"SPE@u.northwestern.edu"),
+	array('fullname' => 'Theta Chi', 			'letters'=> 'TX', 	'email' =>"TX@u.northwestern.edu"),
+	array('fullname' => 'Zeta Beta Tau', 		'letters'=> 'ZBT', 	'email' =>"ZBT@u.northwestern.edu"));
 	
 	foreach ($frats as $frat)
    		addFrat($frat);
@@ -72,7 +104,6 @@ function ifcrush_frat_handle_form(){
 	$thisfrat = array(
 			'letters'	=> $_POST['letters'],
 			'fullname'	=> $_POST['fullname'], 
-			'rushchair' => $_POST['rushchair'], 
 			'email'		=> $_POST['email']
 		);
 	
@@ -86,35 +117,36 @@ function ifcrush_frat_handle_form(){
 	}
 }
 
-/** support function for inserting.  Inserts the passed object data in the
+/** This function adds a user that is a fraternity.
+ ** support function for inserting.  Inserts the passed object data in the user
+ ** data and metadata
  ** Database
  **/
 function addFrat($thisfrat){
 	global $wpdb;
 
-   	if ( userInFrat($thisfrat) ) {
-   	   	
-		$table_name = $wpdb->prefix . "ifc_fraternity";
-	    $rows_affected = $wpdb->insert( $table_name, $thisfrat);
-	
-	   	if ($rows_affected == 0) {
-   			echo "INSERT ERROR for " . $thisfrat['letters'];	
-   		}
-   		return $rows_affected;
-   	} else {
-   		echo "sorry no one logged in or you aren't authorized for this frat, add cancelled";
-   	}
+	$user_id = username_exists( $thisfrat['letters'] );
+	if ( !$user_id and email_exists($thisfrat['email']) == false ) {
+		$random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
+		$user_id = wp_create_user( $thisfrat['letters'], $random_password, $thisfrat['email'] );
+    	update_user_meta( $user_id, 'first_name', 'Mr.'  );
+    	update_user_meta( $user_id, 'last_name', $thisfrat['fullname']  );
+    	update_user_meta( $user_id, 'ifcrush_frat_fullname', $thisfrat['fullname']  );   
+    	update_user_meta( $user_id, 'ifcrush_frat_letters', $thisfrat['letters']  );    	
+    	update_user_meta( $user_id, 'ifcrush_role', 'rc'  );
+	} 
+// 	else /* KBL todo - return value? maybe an error log */
+// 	{
+// 		echo "Fraternity already exists as a user - not added";
+// 	}
 }
 
 /** Updates the DB with data from the POST vars if someone is logged in.
  **/
 function updateFrat($thisfrat){
 		global $wpdb;
-		
-
+	
 		if ( userInFrat($thisfrat) ) {
-			/** jbl todo - check to see if current user is admin or is rush Chair
-			 ** for that frat **/
 			$table_name = $wpdb->prefix . "ifc_fraternity";
 			$where = array('letters' => $thisfrat['letters']);
         	$wpdb->update( $table_name, $thisfrat, $where );
@@ -122,21 +154,9 @@ function updateFrat($thisfrat){
 			echo "sorry no one logged in or you aren't authorized for this frat, update cancelled";
 		} 
 }
-function deleteFrat($thisfrat){
-	global $wpdb;
-	
-	if (userInFrat($thisfrat)){
-		$table_name = $wpdb->prefix . "ifc_fraternity";
-		$wpdb->delete( $table_name, array( 'letters' => $thisfrat['letters'] ) );
-	} else {
-		echo "sorry no one logged in or you aren't authorized for this frat, delete cancelled";
-	}
-}
 
 function userInFrat($thisfrat){
 	if ( is_user_logged_in() ) {
-		/** jbl todo - check to see if current user is admin or is rush Chair
-		 ** for $thisfrat **/
 		$current_user = wp_get_current_user();
 		return true;
 	} else {
@@ -144,32 +164,23 @@ function userInFrat($thisfrat){
 	}
 }
 
-function insertFrat(){
- 		
-		if ( is_user_logged_in() ) {
-			$current_user = wp_get_current_user();
-		} else {
-			echo "no one logged in, insert cancelled";
-			return;
-		}
-     
-		$thisfrat = array(
-			'letters' 	=> $_POST['letters'], 
-	   		'fullname' 	=> $_POST['fullname'], 
-			'rushchair'	=> $_POST['rushchair'],
- 			'email'	    => $_POST['email'],
-		);
-   		add_frat($thisfrat);
-}
 function create_frat_table_header(){
 	?>
 	<div class="frattable">
 		<div class="fratrow">
 				<div class="fratid">
-					Fraternity (name and letters)
+					Fraternity
 				</div>
 				<div class="rushchair">
-					Rush chair (name and email)
+<<<<<<< HEAD
+<<<<<<< HEAD
+					Recruitment chair (name and email)
+=======
+					Rush chair
+>>>>>>> FETCH_HEAD
+=======
+					Rush chair
+>>>>>>> FETCH_HEAD
 				</div>
 				<div class="frataction">
 					Action
@@ -183,46 +194,26 @@ function create_frat_table_footer(){
 <?php
 }
 
-/** jbltodo - add javascript form checking **/
-function create_frat_add_row(){
-?><br>
-	<div class="fratrow">
-		<form method="post">
-			<div  class="fratid">
-				<input type="text" name="fullname" size="20" value="enter frat name"/>&nbsp;
-				<input type="text" name="letters" size="3" value=""/>
-			</div><!-- end fratid-->
-			<div class="rushchair">	
-				<input type="text" name="rushchair" size="15" value="enter rush chair"/>&nbsp;
-				<input type="text" name="email" size="25" value=" rush chair email"/>
-			</div><!-- end rushchair-->
-			<div class="frataction">		
-				<input type="submit" name="addFrat" value="Add Frat"/>
-			</div><!-- end frataction-->
-		</form>
-	</div><br><!-- end fratrow-->
-<?php
-}
 
-function create_frat_table_row($frat){
-	//print_r($frat);
+function create_frat_table_row($thisfrat){
+	//print_r($thisfrat);
+	//'ifcrush_role', 'first_name', 'last_name', 'letters', 'ifcrush_frat_fullname'
 	?>
 	<br>
 	<div class="fratrow">
-		<form method="post">
 			<div class="fratid">
-				<input type="text" name="fullname"  size="20" value="<?php echo $frat->fullname; ?>"/>&nbsp;
-				<input type="text" name="letters"   size="3" value="<?php echo $frat->letters; ?>"/>
+				<?php
+					echo $thisfrat['ifcrush_frat_fullname'] . " " . $thisfrat['ifcrush_frat_letters'];
+				?>
 			</div><!-- end fratid-->
 			<div class="rushchair">
-				<input type="text" name="rushchair" size="15" value="<?php echo $frat->rushchair; ?>"/>&nbsp;
-				<input type="text" name="email" size="25" value="<?php echo $frat->email; ?>"/>
+				<?php
+					echo $thisfrat['first_name'] . " " . $thisfrat['last_name'];
+				?>
 			</div><!-- end rushchair-->
 			<div class="frataction">
-				<input type="submit" name="updateFrat" value="Update"/>&nbsp;
-				<input type="submit" name="deleteFrat" value="Delete"/>
+				nothing for now
 			</div><!-- end frataction-->
-		</form>
 	</div><br><!-- end fratrow-->
 <?php
 }

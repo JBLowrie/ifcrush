@@ -49,6 +49,29 @@ function ifcrush_display_event_table() {
 	}
 }
 
+function create_rc_frat_menu($current){
+	$allpnms = get_all_frats();
+?>
+	<select name="fratID">
+<?php
+	echo "<option value=\"none\">select fraternity</option>\n";
+
+	foreach ($allpnms as $pnm) {
+		$frat_fullname = $pnm['ifcrush_frat_fullname']; 
+		$frat_letters = $pnm['ifcrush_frat_letters']; 
+
+		if ($frat_letters == $current) {
+			echo "<option value=\"$frat_letters\" selected=\"selected\">$frat_fullname</option>\n";
+		} else {
+			echo "<option value=\"$frat_letters\">$frat_fullname</option>\n";
+		}
+	}
+?>
+	</select>
+<?php
+}
+
+
 /**
  *  dummied up data
  **/
@@ -150,40 +173,18 @@ function create_event_table_footer() {
 	?></table><?php
 }
 
-function create_frat_letters_menu($current){
-	global $wpdb;
-
-	$frat_table_name = $wpdb->prefix . "ifc_fraternity";    
-
-	$query = "SELECT letters FROM $frat_table_name group by letters";
-	$frats = $wpdb->get_results($query);
-?>
-	<select name="fratID">
-<?php
-	foreach ($frats as $frat) {
-		//echo "comparing $guesttype $current";
-		if ($frat->letters == $current) {
-			echo "<option value=\"$frat->letters\" selected=\"selected\">$frat->letters</option>\n";
-		} else {
-			echo "<option value=\"$frat->letters\">$frat->letters</option>\n";
-		}
-	}
-?>
-	</select>
-<?php
-}
 function create_event_add_row() {
 	?>
 		<form method="post">
 		<tr>
 				<td>
-					<input type="text" name="eventDate" size=6 value="year-date-month"/>
+					<input type="text" name="eventDate" size=12 value="YYYY-DD-MM"/>
 				</td>
 				<td>
-					<input type="text" name="title" size=15 value="enter title"/>
+					<input type="text" name="title" size=20 value="enter event title"/>
 				</td>
 				<td> <!-- create a selection menu with Frats -->
-					<?php create_frat_letters_menu("   "); ?>
+					<?php /* kbl - todo this should be the current user frat, or select if admin */create_rc_frat_menu("   "); ?>
 				</td>
 				<td>
 					<input type="submit" name="addEvent" value="Add Event"/>
@@ -205,7 +206,7 @@ function create_event_table_row($event) {
 					<input type="text" name="title" size=20 value="<?php echo $event->title; ?>"/>
 				</td>
 				<td> <!-- create a selection menu with Frats -->
-					<?php create_frat_letters_menu($event->fratID); ?>
+					<?php create_rc_frat_menu($event->fratID); ?>
 				</td>
 				<td>
 					<input type="hidden" name="eventID" value="<?php echo $event->eventID; ?>" />				
