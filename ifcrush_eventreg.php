@@ -178,7 +178,7 @@ function create_eventreg_table_row($eventreg) {
 		<form method="post">
 			<tr>
 				<td> 
-					<?php echo $eventreg->pnm_netID;/* kbl todo - make this a name and not a netID*/ ?>
+					<?php echo get_pnm_name_by_netID($eventreg->pnm_netID); ?>
 				</td>
 				<td> 
 					<?php echo $eventreg->fratID."-".$eventreg->title; ?>

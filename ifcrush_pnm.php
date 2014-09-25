@@ -123,4 +123,28 @@ function create_pnm_table_row($pnm) {
 		</div>
 	<?php
 }
+/**
+ * I don't like doing it this way because there are extra queries.  We should
+ * fix the places where this function is needed
+ **/
+function get_pnm_name_by_netID($netID){
+
+	$query = "select meta_value from wp_usermeta where 
+				meta_key='first_name' and user_id in
+				(SELECT user_id FROM wp_usermeta WHERE meta_value='$netID') or 
+				meta_key='last_name' and user_id in 
+				(SELECT user_id FROM wp_usermeta WHERE meta_value='$netID')";
+				
+	/** should return only first_name and last_name **/
+	global $wpdb;		
+
+	$meta_values = $wpdb->get_results($query);
+	foreach($meta_values as $name) {
+		if (!isset($full_name))
+			$full_name = $name->meta_value . " ";
+		else
+			$full_name .= $name->meta_value . " ";
+	}	
+	return $full_name;
+}
 ?>

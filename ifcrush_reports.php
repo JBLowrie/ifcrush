@@ -11,41 +11,59 @@ function ifcrush_display_reports(){
 		return;
 	}
 	
-	ifcrush_display_report_form((isset($_POST['letters'])) ? $_POST['letters']: "");
+	ifcrush_display_pnmsbyfratevent_form();
 	
-	if (isset($_POST['letters'])) 
-		ifcrush_report_handle_form($_POST['letters']);
+	//ifcrush_display_eventsbypnms_form();
+
+	
+	if (isset($_POST['reportype']))
+		ifcrush_report_handle_form();
 
 }
-
-function ifcrush_display_report_form($frat_letters){
+function ifcrush_display_eventsbypnms_form(){
+	$pnms = get_all_pmns();
 ?>
+	<legend>PNMS by Fraternity Event </legend>
+	<fieldset>
 	<form method="post">
 		<?php ifcrush_create_frat_letter_menu($frat_letters); ?>
+		<input type="hidden" name="reportype" value="pnmsbyfratevent" />
 		<input type="submit" value="Create Report"/>
 	</form>
+	</fieldset>
 <?php
 }
-function ifcrush_report_handle_form($frat) { 
+
+function ifcrush_display_pnmsbyfratevent_form(){
+	$frat_letters =(isset($_POST['letters'])) ? $_POST['letters']: "";
+?>
+	<legend>Fraternity Event by PNMS</legend>
+	<fieldset>
+	<form method="post">
+		<?php ifcrush_create_frat_letter_menu($frat_letters); ?>
+		<input type="hidden" name="reportype" value="pnmsbyfratevent" />
+		<input type="submit" value="Create Report"/>
+	</form>
+	</fieldset>
+<?php
+}
+function ifcrush_report_handle_form() { 
 // 
 	global $debug;
 	if ($debug){
-			echo "ifcrush_report_handle_form: $frat";
 			echo "<pre>"; print_r($_POST); echo "</pre>";
 	}
-	
-	ifcrush_report_display_pnmsbyfrat($frat);
-	
-// 	switch($_POST['']) {
-// 		case 'eventsbyfrat':
-// 			eventsbyfrat($_POST['frat']);
-// 			break;
-// 		case 'rusheesbyfrat':
-// 			rusheesbyfrat($_POST['frat']);
-// 			break;
-// 		default:
-// 			echo "no report specified";
-// 	} 
+		
+	switch($_POST['reportype']) {
+		case 'pnmsbyfratevent':
+			ifcrush_report_pnmsbyfratevent($_POST['letters']);
+			break;
+		case 'fratsandevents':
+			ifcrush_report_fratsandevents($_POST['frat']);
+			break;
+		default:
+			echo "no report specified";
+	} 
 	
 } 
 
@@ -53,7 +71,7 @@ function ifcrush_report_handle_form($frat) {
 /** This is a report function.  A function should be added for 
  ** each desired report, and the appropriate case should be added to handle form.
  **/ 
-function ifcrush_report_display_pnmsbyfrat($frat) {
+function ifcrush_report_pnmsbyfratevent($frat) {
 
 	global $wpdb;
 
@@ -71,7 +89,8 @@ function ifcrush_report_display_pnmsbyfrat($frat) {
 	if ($allresults) {
 		foreach ($allresults as $result) {
 		?>
-			<div class="reportrow"><?php echo "$result->fratID-$result->title $result->pnm_netID"; ?></div>
+			<div class="reportrow"><?php echo "$result->fratID $result->title ". 
+			get_pnm_name_by_netID($result->pnm_netID); ?></div>
 		<?php
 		}
 	} 
