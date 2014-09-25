@@ -159,10 +159,10 @@ function create_frat_table_header(){
 	<div class="frattable">
 		<div class="fratrow">
 				<div class="fratid">
-					Fraternity (name and letters)
+					Fraternity
 				</div>
 				<div class="rushchair">
-					Rush chair (name and email)
+					Rush chair
 				</div>
 				<div class="frataction">
 					Action
