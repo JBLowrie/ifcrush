@@ -51,13 +51,13 @@ function createmenu($name, $option){
 add_filter( 'registration_errors', 'ifcrush_registration_errors', 10, 3 );
 function ifcrush_registration_errors( $errors, $sanitized_user_login, $user_email ) {
 
-	if ( ! isset( $_POST['netID'] ) || empty( trim( $_POST['netID'] ) ) ) {
+	if ( ! isset( $_POST['netID'] ) || trim( $_POST['netID'] == false ) ) {
 		$errors->add( 'netID_error', __( '<strong>ERROR</strong>: You must include a netID.', 'ifcrush' ) );
     }
-    if ( ! isset( $_POST['firstname'] ) || empty( trim( $_POST['firstname'] ) ) ) {
+    if ( ! isset( $_POST['firstname'] ) || trim( $_POST['firstname'] == false ) ) {
 		$errors->add( 'firstname_error', __( '<strong>ERROR</strong>: You must include a firstname.', 'ifcrush' ) );
     }
-    if ( ! isset( $_POST['lastname'] ) || empty( trim( $_POST['lastname'] ) ) ) {
+    if ( ! isset( $_POST['lastname'] ) || trim( $_POST['lastname'] == false ) ) {
 		$errors->add( 'lastname_error', __( '<strong>ERROR</strong>: You must include a firstname.', 'ifcrush' ) );
     }
 

@@ -8,28 +8,47 @@
  **/
 function ifcrush_display_eventreg_table() {
 
+	/* sort out who is logged in */
 	if (!is_user_logged_in()) {
-		echo "sorry you must be logged in to see and add event registrations";
+		echo "sorry you must be logged use register pnms for events";
 		return;
 	}
-
+	
+	$current_user = wp_get_current_user();
+	
+	if (is_user_an_rc($current_user)){
+		/* get the frat of the rc
+		 */
+		$fratLetters =  get_frat_letters($current_user);
+		ifcrush_display_eventreg($fratLetters);
+	} else {
+		/* assume its an admin */
+		ifcrush_display_eventreg("");
+	}
 	ifcrush_eventreg_handle_form(); // handle updates, adds, deletes
+}
+/**
+ * Display the table of event registrations
+ * if fratLetters are set, then only display event registrations for 
+ * events for that particular frat.  Otherwise, display all of them.
+ */
+function ifcrush_display_eventreg($fratLetters){
 	
 	global $wpdb;
 	
 	$eventreg_table_name = $wpdb->prefix . "ifc_eventreg";
 	$event_table_name = $wpdb->prefix . "ifc_event";    
 	$query = "SELECT * FROM $eventreg_table_name as er join $event_table_name as e on e.eventID=er.eventID";
+	if ($fratLetters != "")
+		$query .= " where fratID='$fratLetters'";
 	$alleventregs = $wpdb->get_results($query);
 	
 	if ($alleventregs) {
 		create_eventreg_table_header(); // make a table header
 		foreach ($alleventregs as $eventreg) { // populate the rows with db info
-			//echo "<pre>"; print_r($eventreg); echo "</pre>";
-
-			create_eventreg_table_row($eventreg);
+			create_eventreg_table_row($eventreg, $fratLetters);
 		}
-		create_eventreg_add_row();
+		create_eventreg_add_row($fratLetters);
 		create_eventreg_table_footer(); // end the table
 	} 
 	else { 
@@ -39,6 +58,7 @@ function ifcrush_display_eventreg_table() {
 		create_eventreg_table_footer(); // end the table
 	}
 }
+
 function ifcrush_eventreg_handle_form() { 
 
 	global $debug;
@@ -91,9 +111,6 @@ function deleteEventreg($thiseventreg) {
 	$wpdb->delete( $table_name, $thiseventreg);
 } // deletes a event if deleteEvent is tagged
 
-
-
-
 function create_eventreg_table_header() {
 	?>
 		<table>
@@ -106,7 +123,6 @@ function create_eventreg_table_header() {
 function create_eventreg_table_footer() {
 	?></table><?php
 }
-
 
 function create_pnm_netIDs_menu($current){
 	$allpnms = get_all_pmns();
@@ -130,12 +146,13 @@ function create_pnm_netIDs_menu($current){
 	</select>
 <?php
 }
-function create_event_eventIDs_menu($current){
+function create_event_eventIDs_menu($current, $fratLetters){
 	global $wpdb;
-
 	$event_table_name = $wpdb->prefix . "ifc_event";    
+	$query = "SELECT eventID, fratID, title FROM $event_table_name";
 
-	$query = "SELECT eventID, fratID, title FROM $event_table_name group by eventID";
+	$query .= 	($fratLetters != "") ? " where fratID='$fratLetters' group by eventID":
+									   " group by eventID";
 	$events = $wpdb->get_results($query);
 ?>
 	<select name="eventID">
@@ -154,7 +171,7 @@ function create_event_eventIDs_menu($current){
 <?php
 }
 
-function create_eventreg_add_row() {
+function create_eventreg_add_row($fratLetters) {
 	?>
 		<form method="post">
 			<tr>
@@ -162,7 +179,7 @@ function create_eventreg_add_row() {
 					<?php create_pnm_netIDs_menu("   "); ?>
 				</td>
 				<td>
-					<?php create_event_eventIDs_menu("   "); ?>
+					<?php create_event_eventIDs_menu("    ", $fratLetters); ?>
 				</td>
 				<td>
 					<input type="submit" name="addEventreg" value="Add Eventreg"/>
@@ -193,9 +210,4 @@ function create_eventreg_table_row($eventreg) {
 
 	<?php
 }
- 
- 
- 
- 
- 
  ?>

@@ -129,15 +129,16 @@ function create_pnm_table_row($pnm) {
  * fix the places where this function is needed
  **/
 function get_pnm_name_by_netID($netID){
+	global $wpdb;	   
 
-	$query = "select meta_value from wp_usermeta where 
+	$table_name = $wpdb->prefix . "usermeta";
+	$query = "select meta_value from $table_name where 
 				meta_key='first_name' and user_id in
-				(SELECT user_id FROM wp_usermeta WHERE meta_value='$netID') or 
+				(SELECT user_id FROM $table_name WHERE meta_value='$netID') or 
 				meta_key='last_name' and user_id in 
-				(SELECT user_id FROM wp_usermeta WHERE meta_value='$netID')";
+				(SELECT user_id FROM $table_name WHERE meta_value='$netID')";
 				
-	/** should return only first_name and last_name **/
-	global $wpdb;		
+	/** should return only first_name and last_name **/		
 
 	$meta_values = $wpdb->get_results($query);
 	foreach($meta_values as $name) {
