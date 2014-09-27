@@ -2,19 +2,91 @@
 /**
  **  This file contains all the support functions for the table ifcrush_frat
  **/
- 
+ /**
+  * ifcrush_frat() shortcode entry point
+  * Fraternities can view their events, create events, register PNMs
+  *
+  **/
+function ifcrush_frat(){
+	global $debug;
+	//if ($debug) echo "[ifcrush_frat] ";
+	
+	if (!is_user_logged_in()) {
+		echo "sorry you must logged in as a fraternity to access this page.";
+		return;
+	}
+	
+	$current_user = wp_get_current_user();
+	if (is_user_an_rc($current_user)){
+		/* get the frat of the rc */
+		$frat_letters =  get_frat_letters($current_user);
+	} else {
+		echo "sorry you must be a recruitment chair to use this page";
+		return;
+	}
+	
+	/* Now I know who I am.
+	 * Lets see if there are any forms to handle 
+	 */
+	if ( isset($_POST['action']) ){
+//		if ($debug) echo "<pre>"; print_r($_POST); echo "</pre>";
+
+		$action = $_POST['action'];
+		switch ($action) {
+			case "Update Event":
+			case "Delete Event":
+			case "Add Event":
+				ifcrush_event_handle_form($frat_letters);
+				ifcrush_display_events($frat_letters);
+				break;
+				
+			case "Show PNMS":
+				ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
+				ifcrush_display_done_form();
+				break;
+				
+			case "Delete Event Reg":
+				/* add function call to delete this event registration */
+				ifcrush_eventreg_handle_form("delete registration");
+				ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
+				ifcrush_display_done_form();
+				break;
+						
+			case "Register this PMN":
+				/* add this specific PMN to the event, and then display everything */
+				//echo "register ". $_POST['pnm_netID'] . " at " . $_POST['eventID'] . " <br>";
+				ifcrush_eventreg_handle_form("add registration");
+				ifcrush_display_register_pnm_at_event($_POST['eventID']);
+				break;
+				
+			case "Register PMNs":
+				/* display the pmns registered for this event and a form for one more */
+				echo "display register pmns and add form for one more<br>";
+				ifcrush_display_register_pnm_at_event($_POST['eventID']);
+				ifcrush_display_done_form();
+				break;
+				
+			default:
+				echo "unknown action : " . $_POST['action'] . "<br>";
+		}
+	} else {	
+		/* List events and actions for this fraternity */
+		echo "Hello $frat_letters.  Here are your events.";
+		ifcrush_display_events($frat_letters);
+	}
+	
+	/** all done **/
+}
 /** 
- * ifcrush_display_frat_table  shortcode entry point
+ * ifcrush_display_frats - this is an admin function
  **/
-function ifcrush_display_frat_table(){
+function ifcrush_display_frats(){
 
 	if (!is_user_logged_in()) {
 		echo "sorry you must be logged in to see and edit fraternities";
 		return;
 	}
-	/** handle the form if submitted, and display for next time **/
-	//ifcrush_frat_handle_form();
-	//display_add_frat_form();
+	
 	
 	global $wpdb;	   
 	
@@ -67,96 +139,16 @@ function get_all_frats(){
 function is_rc($user){
 	return isset($user['ifcrush_role']) && ($user['ifcrush_role'] == 'rc');
 }
-
+function ifcrush_display_done_form(){
+//	global $debug;
+//	if ($debug) echo "[ifcrush_display_done_form]";
+?>
+	<form method="post">
+	<input type="submit" value="done"/>
+	</form>
+<?php
+}
  
-/** initial array of fraternities **/
-/** ifcrush_install_frats() - HACK to put in some sample data.  
- ** Should be deleted or actual frat data added once actual data is available. jbltodo
- **/
-function ifcrush_install_frats() {
-	$frats = array( 
-	array('fullname' => 'Alpha Epsilon Pi', 	'letters'=> 'AEP',	'email' =>"AEP@u.northwestern.edu"),
-	array('fullname' => 'Delta Chi', 			'letters'=> 'DX',	'email' =>"DX@u.northwestern.edu"),
-	array('fullname' => 'Delta Tau Delta', 		'letters'=> 'DTD',	'email' =>"DTD@u.northwestern.edu"),
-	array('fullname' => 'Evans Scholars', 		'letters'=> 'ES',	'email' =>"ES@u.northwestern.edu"),
-	array('fullname' => 'Lambda Chi Alpha', 	'letters'=> 'LXA',	'email' =>"LXA@u.northwestern.edu"),
-	array('fullname' => 'Phi Delta Theta', 		'letters'=> 'FDT',	'email' =>"FDT@u.northwestern.edu"),
-	array('fullname' => 'Phi Gamma Delta', 		'letters'=> 'FJ', 	'email' =>"FJ@u.northwestern.edu"),
-	array('fullname' => 'Phi Kappa Psi', 		'letters'=> 'PKP', 	'email' =>"PKP@u.northwestern.edu"),
-	array('fullname' => 'Phi Mu Alpha', 		'letters'=> 'PMA', 	'email' =>"PMA@u.northwestern.edu"),
-	array('fullname' => 'Pi Kappa Alpha', 		'letters'=> 'PKA', 	'email' =>"PKA@u.northwestern.edu"),
-	array('fullname' => 'Sigma Alpha Epsilon', 	'letters'=> 'SAE', 	'email' =>"SAE@u.northwestern.edu"),
-	array('fullname' => 'Sigma Chi', 			'letters'=> 'SX', 	'email' =>"SX@u.northwestern.edu"),
-	array('fullname' => 'Sigma Phi Epsilon', 	'letters'=> 'SPE', 	'email' =>"SPE@u.northwestern.edu"),
-	array('fullname' => 'Theta Chi', 			'letters'=> 'TX', 	'email' =>"TX@u.northwestern.edu"),
-	array('fullname' => 'Zeta Beta Tau', 		'letters'=> 'ZBT', 	'email' =>"ZBT@u.northwestern.edu"));
-	
-	foreach ($frats as $frat)
-   		addFrat($frat);
-
-}
-function ifcrush_frat_handle_form(){
-	global $debug;
-	if ($debug){
-			echo "<pre>"; print_r($_POST); echo "</pre>";
-	}
-	
-	if (!isset($_POST['letters']))
-		return;
-		
-	$thisfrat = array(
-			'letters'	=> $_POST['letters'],
-			'fullname'	=> $_POST['fullname'], 
-			'email'		=> $_POST['email']
-		);
-	
-	/*** handle form submission **/
-	if ( isset($_POST['deleteFrat']) ){
-		deleteFrat($thisfrat);
-	} else if ( isset($_POST['updateFrat']) ){
-		updateFrat($thisfrat);
-	} else if ( isset($_POST['addFrat']) ) {
-		addFrat($thisfrat);
-	}
-}
-
-/** This function adds a user that is a fraternity.
- ** support function for inserting.  Inserts the passed object data in the user
- ** data and metadata
- ** Database
- **/
-function addFrat($thisfrat){
-	global $wpdb;
-
-	$user_id = username_exists( $thisfrat['letters'] );
-	if ( !$user_id and email_exists($thisfrat['email']) == false ) {
-		//$random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
-		$user_id = wp_create_user( $thisfrat['letters'], strtolower($thisfrat['letters']), $thisfrat['email'] );
-    	update_user_meta( $user_id, 'first_name', 'Mr.'  );
-    	update_user_meta( $user_id, 'last_name', $thisfrat['fullname']  );
-    	update_user_meta( $user_id, 'ifcrush_frat_fullname', $thisfrat['fullname']  );   
-    	update_user_meta( $user_id, 'ifcrush_frat_letters', $thisfrat['letters']  );    	
-    	update_user_meta( $user_id, 'ifcrush_role', 'rc'  );
-	} 
-// 	else /* KBL todo - return value? maybe an error log */
-// 	{
-// 		echo "Fraternity already exists as a user - not added";
-// 	}
-}
-
-/** Updates the DB with data from the POST vars if someone is logged in.
- **/
-function updateFrat($thisfrat){
-		global $wpdb;
-	
-		if ( userInFrat($thisfrat) ) {
-			$table_name = $wpdb->prefix . "ifc_fraternity";
-			$where = array('letters' => $thisfrat['letters']);
-        	$wpdb->update( $table_name, $thisfrat, $where );
-		} else {
-			echo "sorry no one logged in or you aren't authorized for this frat, update cancelled";
-		} 
-}
 
 function userInFrat($thisfrat){
 	if ( is_user_logged_in() ) {

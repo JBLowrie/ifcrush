@@ -60,12 +60,8 @@ register_activation_hook( __FILE__, 'ifcrush_install' );
  ** available.
  **/
 function ifcrush_install_data() {
-global $debug;
- 	if ($debug){
- 		ifcrush_install_frats();
-		ifcrush_install_events();
-// 		ifcrush_install_eventreg();
- 	}
+	global $debug;
+ 	
 }
 register_activation_hook( __FILE__, 'ifcrush_install_data' );
 
@@ -103,25 +99,41 @@ function safely_add_stylesheet() {
 }
 add_action( 'wp_enqueue_scripts', 'safely_add_stylesheet' );
 
+/**
+ * Redirect user after successful login.
+ *
+ * @param string $redirect_to URL to redirect to.
+ * @param string $request URL the user is coming from.
+ * @param object $user Logged users data.
+ * @return string
+ */
+function my_login_redirect( $redirect_to, $request, $user ) {
+	//is there a user to check?
+	global $user;
+	if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+		//check for admins
+		if ( in_array( 'administrator', $user->roles ) ) {
+			// redirect them to the default place
+			return $redirect_to;
+		} else {
+			return home_url();
+		}
+	} else {
+		return $redirect_to;
+	}
+}
+add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
 
-
+include 'ifcrush_event.php';
+include 'ifcrush_eventreg.php';
 /**
  * These are the functions to wire in the shortcodes
  **/ 
 include 'ifcrush_frat.php';  /** This has all the Frat table support **/
-add_shortcode( 'ifcrush_display_frat_table',   'ifcrush_display_frat_table' );
+add_shortcode( 'ifcrush_frat',   'ifcrush_frat' );
 
 include 'ifcrush_pnm.php';  /** This has all the Rushee table support **/
-add_shortcode( 'ifcrush_display_pnms',   'ifcrush_display_pnms' );
-
-include 'ifcrush_event.php';  /** This has all the Rushee table support **/
-add_shortcode( 'ifcrush_display_event_table',   'ifcrush_display_event_table' );
-
-include 'ifcrush_eventreg.php';
-add_shortcode('ifcrush_display_eventreg_table', 'ifcrush_display_eventreg_table');
-
-include 'ifcrush_reports.php';
-add_shortcode('ifcrush_display_reports', 'ifcrush_display_reports');
+add_shortcode( 'ifcrush_pnm',   'ifcrush_pnm' );
 
 include 'ifcrush_user_support.php';
 add_action( 'register_form', 'ifcrush_register_form' );?>

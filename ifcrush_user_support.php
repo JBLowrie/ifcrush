@@ -80,33 +80,48 @@ function ifcrush_user_register( $user_id ) {
     	update_user_meta( $user_id, 'ifcrush_affiliation', 'none'  );
     }
 }
+
+/* support functions to see type of current user and to get id of current users
+ * IDs in this case are the letters and netIDs since that information 
+ * identifies the user in our event and eventreg tables 
+ */
 function is_user_an_rc($current_user){
 	$key = 'ifcrush_role';
 	$single = true;
 	$user_role = get_user_meta($current_user->ID, $key, $single ); 
 	return($user_role == 'rc');
-
 }
 
-/*
- * possibly could use this only and not check for rc, because only rcs have frat letters
- * and all rcs must have frat letters
- */
 function get_frat_letters($current_user){
 	$key = 'ifcrush_frat_letters';
 	$single = true;
 	$frat_letters = get_user_meta($current_user->ID, $key, $single ); 
 	return($frat_letters);
-
 }
 
-function is_user_an_pnm($current_user){
+function is_user_a_pnm($current_user){
 	$key = 'ifcrush_role';
 	$single = true;
 	$user_role = get_user_meta($current_user->ID, $key, $single ); 
 	return($user_role == 'pnm');
 }
+function get_pnm_netID($current_user){
+	$key = 'ifcrush_netID';
+	$single = true;
+	$netID = get_user_meta($current_user->ID, $key, $single ); 
+	return($netID);
+}
+function get_current_user_name($current_user){
+	$key = 'first_name';
+	$single = true;
+	$firstname = get_user_meta($current_user->ID, $key, $single ); 
+	$key = 'last_name';
+	$single = true;
+	$lastname = get_user_meta($current_user->ID, $key, $single ); 
+	return($firstname . " " . $lastname);
+}
 
+/** probably don't need this **/
 function is_user_an_ifc_admin($current_user){
 	$key = 'ifcrush_role';
 	$single = true;

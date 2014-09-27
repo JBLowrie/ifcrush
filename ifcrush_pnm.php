@@ -2,10 +2,40 @@
 /**
  **  This file contains all the support functions for viewing and managing
  **  Potential New Members (aka PNMs).  These 
- 
- 
- 
  **/
+ 
+/**
+ * This is the PNM shortcode entry point
+ **/
+function ifcrush_pnm(){
+// 	global $debug;
+// 	if ($debug) echo "[ifcrush_pnm] ";
+	
+	if (!is_user_logged_in()) {
+		echo "sorry you must logged in as a pnm to access this page.";
+		return;
+	}
+	
+	$current_user = wp_get_current_user();
+	if (is_user_a_pnm($current_user)){
+		/* get the frat of the rc */
+		$pnm_netID =  get_pnm_netID($current_user);
+	} else {
+		echo "sorry you must logged in as a pnm to access this page.";
+		return;
+	}
+	
+	/* 
+	 * Now I know who I am.
+	 */	
+	$username = get_current_user_name($current_user);
+	echo "Hello $username.  Here are your events.";
+	
+	ifcrush_event_reg_for_pnm($pnm_netID);
+	
+	/** all done **/
+}
+ 
 /* kbl note is_admin() is a wp function */
 function ifcrush_isuserrc(){
 	if ( is_user_logged_in() ) {
