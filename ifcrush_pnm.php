@@ -29,9 +29,9 @@ function ifcrush_pnm(){
 	 * Now I know who I am.
 	 */	
 	$username = get_current_user_name($current_user);
-	echo "Hello $username.  Here are your events.";
+	echo "Hello $username.  You attended these events:<br><br>";
 	
-	ifcrush_event_reg_for_pnm($pnm_netID);
+	ifcrush_eventreg_for_pnm($pnm_netID);
 	
 	/** all done **/
 }

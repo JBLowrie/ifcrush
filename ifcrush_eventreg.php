@@ -62,12 +62,12 @@ function ifcrush_display_eventreg_frat($fratLetters){
 }
 
 /**
- * Display event registrations for a PNM
+ * Display event registrations for a PNM.  This is not a table, its just data.
  **/
-function ifcrush_event_reg_for_pnm($pnm_netID){
+function ifcrush_eventreg_for_pnm($pnm_netID){
 // 	global $debug;
 // 	if ($debug) {
-// 		echo "[ifcrush_event_reg_for_pnm]";
+// 		echo "[ifcrush_eventreg_for_pnm]";
 // 	}
 	
 	global $wpdb;
@@ -79,22 +79,19 @@ function ifcrush_event_reg_for_pnm($pnm_netID){
 	$alleventregs = $wpdb->get_results($query);
 	
 	if ($alleventregs) {
-		create_eventreg_table_header(); // make a table header
 		foreach ($alleventregs as $eventreg) { // populate the rows with db info
-			create_eventreg_table_row($eventreg);
+			echo $eventreg->fratID." ".$eventreg->eventDate." ".$eventreg->title . "<br>";
 		}
-		create_eventreg_table_footer(); // end the table
 	} 
 	else { 
 		?><h2>You haven't been registered at any events</h2><?php
 	}
 
 }
+/**
+ * This function displays a table that allows pnms to be registered at events.
+ **/
 function ifcrush_display_register_pnm_at_event($eventID){
-// 	global $debug;
-// 	if ($debug) {
-// 		echo "[ifcrush_display_register_pnm_at_event]";
-// 	}
 	
 	global $wpdb;
 	$eventreg_table_name = $wpdb->prefix . "ifc_eventreg";
@@ -103,15 +100,6 @@ function ifcrush_display_register_pnm_at_event($eventID){
 				where e.eventID=$eventID";
 	
 	$alleventregs = $wpdb->get_results($query);
-	
-	// if ($debug) { 
-// 		echo "<pre>"; 
-// 		echo "query: $query
-// 		";
-// 		print_r($alleventregs); 
-// 		echo "</pre>";
-// 	}
-
 	
 	if ($alleventregs) {
 		create_eventreg_table_header(); // make a table header
@@ -221,11 +209,13 @@ function create_pnm_netIDs_menu($current){
 		$pnm_netID = $pnm['ifcrush_netID']; 
 		$last_name = $pnm['last_name']; 
 		$first_name = $pnm['first_name']; 
-
+		$name = $first_name . " " . $last_name;
+		$displayoption = $pnm_netID ." - ". $name;
+		
 		if ($pnm_netID == $current) {
-			echo "<option value=\"$pnm_netID\" selected=\"selected\">$pnm_netID</option>\n";
+			echo "<option value=\"$pnm_netID\" selected=\"selected\">$displayoption</option>\n";
 		} else {
-			echo "<option value=\"$pnm_netID\">$pnm_netID</option>\n";
+			echo "<option value=\"$pnm_netID\">$displayoption</option>\n";
 		}
 	}
 ?>
@@ -258,34 +248,31 @@ function create_event_eventIDs_menu($current, $fratLetters){
 }
 
 function create_eventreg_add_row($eventID) {
-	global $wpdb;
-	$event_table_name = $wpdb->prefix . "ifc_event";    
-	$query = "SELECT eventID, fratID, title FROM $event_table_name 
-					where eventID=$eventID";
-	$event = $wpdb->get_results($query);
-	
-// 	global $debug;
-// 	if ($debug) {
-// 		echo "<pre>".print_r($event)."</pre>";
-// 	}
 	?>
-	
 		<form method="post">
 			<tr>
 				<td> 
 					<?php create_pnm_netIDs_menu("   "); ?>
 				</td>
 				<td>
-					<?php echo $event[0]->title; ?>
+					<?php echo get_event_title_by_eventID($eventID); ?>
 				</td>
 				<td>
-					<input type="hidden" name="eventID" value="<?php echo $event[0]->eventID; ?>"/>
+					<input type="hidden" name="eventID" value="<?php echo $eventID; ?>"/>
 					<input type="submit" name="action" value="Register this PMN"/>
 				</td>
 			</tr>
 		</form>
 
 	<?php
+}
+function get_event_title_by_eventID($eventID){
+	global $wpdb;
+	$event_table_name = $wpdb->prefix . "ifc_event";    
+	$query = "SELECT eventID, fratID, title FROM $event_table_name 
+					where eventID=$eventID";
+	$event = $wpdb->get_results($query);
+	return($event[0]->fratID ." ". $event[0]->title);
 }
 
 function create_eventreg_table_row($eventreg) {
@@ -308,4 +295,4 @@ function create_eventreg_table_row($eventreg) {
 
 	<?php
 }
- ?>
+?>

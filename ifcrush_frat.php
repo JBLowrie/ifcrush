@@ -42,14 +42,14 @@ function ifcrush_frat(){
 				
 			case "Show PNMS":
 				ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
-				ifcrush_display_done_form();
+				ifcrush_display_done_form("Finished showing PNMS");
 				break;
 				
 			case "Delete Event Reg":
 				/* add function call to delete this event registration */
 				ifcrush_eventreg_handle_form("delete registration");
 				ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
-				ifcrush_display_done_form();
+				ifcrush_display_done_form("Finished showing PNMS");
 				break;
 						
 			case "Register this PMN":
@@ -57,13 +57,14 @@ function ifcrush_frat(){
 				//echo "register ". $_POST['pnm_netID'] . " at " . $_POST['eventID'] . " <br>";
 				ifcrush_eventreg_handle_form("add registration");
 				ifcrush_display_register_pnm_at_event($_POST['eventID']);
+				ifcrush_display_done_form("Finished showing PNMS");
 				break;
 				
 			case "Register PMNs":
 				/* display the pmns registered for this event and a form for one more */
 				echo "display register pmns and add form for one more<br>";
 				ifcrush_display_register_pnm_at_event($_POST['eventID']);
-				ifcrush_display_done_form();
+				ifcrush_display_done_form("Finished showing PNMS");
 				break;
 				
 			default:
@@ -139,12 +140,12 @@ function get_all_frats(){
 function is_rc($user){
 	return isset($user['ifcrush_role']) && ($user['ifcrush_role'] == 'rc');
 }
-function ifcrush_display_done_form(){
+function ifcrush_display_done_form($label){
 //	global $debug;
 //	if ($debug) echo "[ifcrush_display_done_form]";
 ?>
 	<form method="post">
-	<input type="submit" value="done"/>
+	<input type="submit" value="<?php echo $label; ?>"/>
 	</form>
 <?php
 }

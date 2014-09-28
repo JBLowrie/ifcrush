@@ -26,12 +26,13 @@ function ifcrush_display_events($frat_letters) {
 	
 	if ($allevents) {
 		create_event_table_header(); // make a table header
+		create_event_add_row($frat_letters);
+
 		foreach ($allevents as $event) { // populate the rows with db info
 			//echo "<pre>"; print_r($event); echo "</pre>";
 
 			create_event_table_row($event);
 		}
-		create_event_add_row($frat_letters);
 		create_event_table_footer(); // end the table
 	} 
 	else { 
@@ -190,15 +191,15 @@ function create_event_table_row($event) {
 
 /*** may be obsolete **/
 function create_rc_frat_menu($current){
-	$allpnms = get_all_frats();
+	$allfrats = get_all_frats();
 ?>
 	<select name="fratID">
 <?php
 	echo "<option value=\"none\">select fraternity</option>\n";
 
-	foreach ($allpnms as $pnm) {
-		$frat_fullname = $pnm['ifcrush_frat_fullname']; 
-		$frat_letters = $pnm['ifcrush_frat_letters']; 
+	foreach ($allfrat as $frat) {
+		$frat_fullname = $frat['ifcrush_frat_fullname']; 
+		$frat_letters = $frat['ifcrush_frat_letters']; 
 
 		if ($frat_letters == $current) {
 			echo "<option value=\"$frat_letters\" selected=\"selected\">$frat_fullname</option>\n";
