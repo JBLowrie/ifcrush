@@ -41,30 +41,32 @@ function ifcrush_frat(){
 				break;
 				
 			case "Show PNMS":
-				ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
 				ifcrush_display_done_form("Finished showing PNMS");
+				ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
+			
 				break;
 				
 			case "Delete Event Reg":
+				ifcrush_display_done_form("Finished showing PNMS");
 				/* add function call to delete this event registration */
 				ifcrush_eventreg_handle_form("delete registration");
 				ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
-				ifcrush_display_done_form("Finished showing PNMS");
 				break;
 						
 			case "Register this PMN":
+				ifcrush_display_done_form("Finished showing PNMS");
 				/* add this specific PMN to the event, and then display everything */
 				//echo "register ". $_POST['pnm_netID'] . " at " . $_POST['eventID'] . " <br>";
 				ifcrush_eventreg_handle_form("add registration");
 				ifcrush_display_register_pnm_at_event($_POST['eventID']);
-				ifcrush_display_done_form("Finished showing PNMS");
+				
 				break;
 				
 			case "Register PMNs":
+				ifcrush_display_done_form("Finished showing PNMS");
 				/* display the pmns registered for this event and a form for one more */
 				echo "display register pmns and add form for one more<br>";
 				ifcrush_display_register_pnm_at_event($_POST['eventID']);
-				ifcrush_display_done_form("Finished showing PNMS");
 				break;
 				
 			default:
