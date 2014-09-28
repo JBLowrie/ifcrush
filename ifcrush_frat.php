@@ -18,7 +18,6 @@ function ifcrush_frat(){
 	
 	$current_user = wp_get_current_user();
 	if (is_user_an_rc($current_user)){
-		/* get the frat of the rc */
 		$frat_letters =  get_frat_letters($current_user);
 	} else {
 		echo "sorry you must be a recruitment chair to use this page";
@@ -29,49 +28,9 @@ function ifcrush_frat(){
 	 * Lets see if there are any forms to handle 
 	 */
 	if ( isset($_POST['action']) ){
-//		if ($debug) echo "<pre>"; print_r($_POST); echo "</pre>";
+	
+		ifcrush_frat_handle_forms($_POST['action'], $frat_letters);
 
-		$action = $_POST['action'];
-		switch ($action) {
-			case "Update Event":
-			case "Delete Event":
-			case "Add Event":
-				ifcrush_event_handle_form($frat_letters);
-				ifcrush_display_events($frat_letters);
-				break;
-				
-			case "Show PNMS":
-				ifcrush_display_done_form("Finished showing PNMS");
-				ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
-			
-				break;
-				
-			case "Delete Event Reg":
-				ifcrush_display_done_form("Finished showing PNMS");
-				/* add function call to delete this event registration */
-				ifcrush_eventreg_handle_form("delete registration");
-				ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
-				break;
-						
-			case "Register this PMN":
-				ifcrush_display_done_form("Finished showing PNMS");
-				/* add this specific PMN to the event, and then display everything */
-				//echo "register ". $_POST['pnm_netID'] . " at " . $_POST['eventID'] . " <br>";
-				ifcrush_eventreg_handle_form("add registration");
-				ifcrush_display_register_pnm_at_event($_POST['eventID']);
-				
-				break;
-				
-			case "Register PMNs":
-				ifcrush_display_done_form("Finished showing PNMS");
-				/* display the pmns registered for this event and a form for one more */
-				echo "display register pmns and add form for one more<br>";
-				ifcrush_display_register_pnm_at_event($_POST['eventID']);
-				break;
-				
-			default:
-				echo "unknown action : " . $_POST['action'] . "<br>";
-		}
 	} else {	
 		/* List events and actions for this fraternity */
 		echo "Hello $frat_letters.  Here are your events.";
@@ -79,6 +38,46 @@ function ifcrush_frat(){
 	}
 	
 	/** all done **/
+}
+function ifcrush_frat_handle_forms($action,$frat_letters){
+	switch ($action) {
+		case "Update Event":
+		case "Delete Event":
+		case "Add Event":
+			ifcrush_event_handle_form($frat_letters);
+			ifcrush_display_events($frat_letters);
+			break;
+			
+		case "Show PNMS":
+			ifcrush_display_done_form("Finished showing PNMS");
+			ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
+			break;
+			
+		case "Delete Event Reg":
+			ifcrush_display_done_form("Finished showing PNMS");
+			/* add function call to delete this event registration */
+			ifcrush_eventreg_handle_form("delete registration");
+			ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
+			break;
+					
+		case "Register this PMN":
+			ifcrush_display_done_form("Finished showing PNMS");
+			/* add this specific PMN to the event, and then display everything */
+			//echo "register ". $_POST['pnm_netID'] . " at " . $_POST['eventID'] . " <br>";
+			ifcrush_eventreg_handle_form("add registration");
+			ifcrush_display_register_pnm_at_event($_POST['eventID']);		
+			break;
+			
+		case "Register PMNs":
+			ifcrush_display_done_form("Finished showing PNMS");
+			/* display the pmns registered for this event and a form for one more */
+			echo "display register pmns and add form for one more<br>";
+			ifcrush_display_register_pnm_at_event($_POST['eventID']);
+			break;
+			
+		default:
+			echo "unknown action : $action<br>";
+	}
 }
 /** 
  * ifcrush_display_frats - this is an admin function
