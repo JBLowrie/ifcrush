@@ -56,7 +56,7 @@ function ifcrush_install(){
 }
 register_activation_hook( __FILE__, 'ifcrush_install' );
 
-register_activation_hook( __FILE__, 'ifcrush_install_data' );
+//register_activation_hook( __FILE__, 'ifcrush_install_data' );
 
 
 /** ifcrush_deactivate() - cleans up when the plugin is deactived, 
@@ -91,6 +91,12 @@ function safely_add_stylesheet() {
 	wp_enqueue_style( 'prefix-style', plugins_url('css/ifcrushstyle.css', __FILE__) );
 }
 add_action( 'wp_enqueue_scripts', 'safely_add_stylesheet' );
+
+/* supposedly the correct way to load jquery */
+add_action( 'wp_enqueue_script', 'load_jquery' );
+function load_jquery() {
+    wp_enqueue_script( 'jquery' );
+}
 
 /**
  * Redirect user after successful login.

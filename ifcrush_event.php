@@ -123,7 +123,7 @@ function create_event_table_footer() {
 function create_event_add_row($frat_letters) {
 	?>
 		<div class="ifcrushtableaddrow">
-			<form method="post">
+			<form method="post" id="addeventform">
 				<div class="ifcrushtablecellnarrow">
 					<input type="text" name="eventDate" size=12 value="YYYY-DD-MM"/>
 				</div>
@@ -141,7 +141,7 @@ function create_event_add_row($frat_letters) {
 function create_event_table_row($event) {
 	?>
 		<div class="ifcrushtablerow">
-			<form method="post">
+			<form method="post" >
 				<div class="ifcrushtablecellnarrow">
 					<input type="text" name="eventDate" size=20 value="<?php echo $event->eventDate; ?>"/>
 				</div>
