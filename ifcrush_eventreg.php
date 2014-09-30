@@ -17,8 +17,7 @@ function ifcrush_display_eventreg_placeholder() {
 	$current_user = wp_get_current_user();
 	
 	if (is_user_an_rc($current_user)){
-		/* get the frat of the rc
-		 */
+		/* get the frat of the rc */
 		$fratLetters =  get_frat_letters($current_user);
 		ifcrush_display_eventreg($fratLetters);
 	} else {
@@ -103,6 +102,7 @@ function ifcrush_display_register_pnm_at_event($eventID){
 	
 	if ($alleventregs) {
 		create_eventreg_table_header(); // make a table header
+		echo "<hr>";
 		create_eventreg_add_row($eventID);
 
 		foreach ($alleventregs as $eventreg) { // populate the rows with db info
@@ -185,18 +185,6 @@ function deleteEventreg($thiseventreg) {
 	$wpdb->delete( $table_name, $thiseventreg);
 } // deletes a event if deleteEvent is tagged
 
-function create_eventreg_table_header() {
-	?>
-		<table>
-		<tr>
-			<th>PNM</th>
-			<th>Fraternity-Event Title</th>
-		</tr>
-	<?php
-}
-function create_eventreg_table_footer() {
-	?></table><?php
-}
 
 function create_pnm_netIDs_menu($current){
 	$allpnms = get_all_pmns();
@@ -247,25 +235,6 @@ function create_event_eventIDs_menu($current, $fratLetters){
 <?php
 }
 
-function create_eventreg_add_row($eventID) {
-	?>
-		<form method="post">
-			<tr>
-				<td> 
-					<?php create_pnm_netIDs_menu("   "); ?>
-				</td>
-				<td>
-					<?php echo get_event_title_by_eventID($eventID); ?>
-				</td>
-				<td>
-					<input type="hidden" name="eventID" value="<?php echo $eventID; ?>"/>
-					<input type="submit" name="action" value="Register this PMN"/>
-				</td>
-			</tr>
-		</form>
-
-	<?php
-}
 function get_event_title_by_eventID($eventID){
 	global $wpdb;
 	$event_table_name = $wpdb->prefix . "ifc_event";    
@@ -275,24 +244,60 @@ function get_event_title_by_eventID($eventID){
 	return($event[0]->fratID ." ". $event[0]->title);
 }
 
+function create_eventreg_table_header() {
+	?>
+	<div class="ifcrushtable">
+		<div class="ifcrushtablerow">
+			<div class="ifcrushtablecellwide">PNM</div>
+			<div class="ifcrushtablecellwide">Fraternity-Event Title</div>
+			<div class="ifcrushtablecellauto"></div>
+		</div><!-- end ifcrush tablerow-->
+	<?php
+}
+
+function create_eventreg_table_footer() {
+	?></div><!-- end ifcrush table--><?php
+}
+
+function create_eventreg_add_row($eventID) {
+?>
+	<div class="ifcrushtableaddrow">
+		<fieldset><form method="post">
+			<div class="ifcrushtablecellwide">
+				<?php create_pnm_netIDs_menu("   "); ?>
+			</div>
+			<div class="ifcrushtablecellwide">
+				<?php echo get_event_title_by_eventID($eventID); ?>
+			</div>
+			<div class="ifcrushtablecellauto'>
+				<input type="hidden" name="eventID" value="<?php echo $eventID; ?>"/>
+				<input type="submit" name="action" value="Register this PMN"/>
+			</div>
+			</tr>
+		</form></fieldset>
+	</div><!-- end ifcrush tablerow-->
+	<hr>
+<?php
+}
+
 function create_eventreg_table_row($eventreg) {
 	?>
+	<div class="ifcrushtablerow">
 		<form method="post">
-			<tr>
-				<td> 
-					<?php echo get_pnm_name_by_netID($eventreg->pnm_netID); ?>
-				</td>
-				<td> 
-					<?php echo $eventreg->fratID."-".$eventreg->title; ?>
-				</td>
-				<td>
-					<input type="hidden" name="eventID" value="<?php echo $eventreg->eventID; ?> ">		
-					<input type="hidden" name="pnm_netID" value="<?php echo $eventreg->pnm_netID; ?> ">		
-					<input type="submit" name="action" value="Delete Event Reg"/>
-				</td>
-			</tr>
+			<div class="ifcrushtablecellwide">
+				<?php echo get_pnm_name_by_netID($eventreg->pnm_netID); ?>
+			</div>
+			<div class="ifcrushtablecellwide">
+				<?php echo $eventreg->fratID."-".$eventreg->title; ?>
+			</div>
+			<div class="ifcrushtablecellauto">
+				<input type="hidden" name="eventID" value="<?php echo $eventreg->eventID; ?> ">		
+				<input type="hidden" name="pnm_netID" value="<?php echo $eventreg->pnm_netID; ?> ">		
+				<input type="submit" name="action" value="Delete Event Reg"/>
+			</div>
 		</form>
-
-	<?php
+	</div><!-- end ifcrush tablerow-->
+	<hr>
+<?php
 }
 ?>

@@ -1,58 +1,53 @@
-.frattable {
-	width: 100%;
-}
+   .ifcrushtable
+    {
+        display:  table;
+        width:100%;
+       /* border-collapse:separate;*/
+       	padding: 5px;
+    }
+
+    .ifcrushtablerow
+    {
+       display:table-row;
+       width:100%;
+       	padding: 5px;
+    }
+
+    .ifcrushtablecellnarrow
+    {
+        float:left;/*fix for  buggy browsers*/
+        display:table-column;
+        width:25%;
+       	padding:5px;
+    }
+    .ifcrushtablecellwide
+    {
+        float:left;/*fix for  buggy browsers*/
+        display:table-column;
+        width:40%;
+       	padding:5px;
+    }
+    .ifcrushtablecellauto
+    {
+        float:left;/*fix for  buggy browsers*/
+        display:table-column;
+        width:auto;
+       	padding:5px;
+
+    }
+
 .frattableheaders {
 	font-weight: bold;
-	padding:15px;
+	padding: 5px;
 	border: 10px solid red;
 }
 
-.fratrow  {
+.ifcrushtablerow  {
 	width: 100%;
 	padding:5px;
 }
-
-.fratid {
-	width: 30%;
-	float:left;
+.ifcrushtableaddrow  {
+	width: 100%;
 	padding:5px;
-	border: 5px;
-}
-.rushchair {
-	width: 50%;
-	float:left;
-	padding:5px;
-	border: 5px;
-}
-.frataction {
-	width: 20%;
-	float:left;
-	padding:5px;
-	border: 5px;
-}
-.ifcrushbutton {
-	color: black;
-	width: 100%
-	background-color: purple;
-	padding:5px;
-	border: 5px solid brown;
-}
-
-.pnmid {
-	width: 30%;
-	float:left;
-	padding:5px;
-	border: 5px;
-}
-.pnmdata {
-	width: 50%;
-	float:left;
-	padding:5px;
-	border: 5px;
-}
-.pnmstatus {
-	width: 20%;
-	float:left;
-	padding:5px;
-	border: 5px;
+	/* put something here to make addrows look different.  I tried background-color without success */
 }

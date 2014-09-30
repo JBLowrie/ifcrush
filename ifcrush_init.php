@@ -56,13 +56,6 @@ function ifcrush_install(){
 }
 register_activation_hook( __FILE__, 'ifcrush_install' );
 
-/** ifcrush_install_data() - Puts in some sample data.  Should be deleted once actual data is
- ** available.
- **/
-function ifcrush_install_data() {
-	global $debug;
- 	
-}
 register_activation_hook( __FILE__, 'ifcrush_install_data' );
 
 

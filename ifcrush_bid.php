@@ -1,6 +1,6 @@
 // 	$table_name = $wpdb->prefix . "ifc_bid";    
 // 	$sql = 	"CREATE TABLE $table_name(
-// 		bidstat 	int not null,
+// 		bid_status 	int not null,
 // 		netID		varchar(6) not null,
 // 		fratID		varchar(3) not null
 // 	) engine = InnoDB;";

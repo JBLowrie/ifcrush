@@ -145,9 +145,11 @@ function ifcrush_display_done_form($label){
 //	global $debug;
 //	if ($debug) echo "[ifcrush_display_done_form]";
 ?>
+<br>
 	<form method="post">
 	<input type="submit" value="<?php echo $label; ?>"/>
 	</form>
+<hr>
 <?php
 }
  
@@ -163,18 +165,18 @@ function userInFrat($thisfrat){
 
 function create_frat_table_header(){
 	?>
-	<div class="frattable">
-		<div class="fratrow">
-				<div class="fratid">
+	<div class="ifcrushtable">
+		<div class="ifcrushtablerow">
+				<div class="ifcrushtablecellwide">
 					Fraternity
 				</div>
-				<div class="rushchair">
+				<div class="ifcrushtablecellwide">
 					Recruitment chair
 				</div>
-				<div class="frataction">
+				<div class="ifcrushtablecellauto">
 					Action
 				</div>
- 		</div><!--end fratrow-->
+ 		</div><!--end ifcrushtablerow-->
 	<?php
 }
 function create_frat_table_footer(){
@@ -189,21 +191,45 @@ function create_frat_table_row($thisfrat){
 	//'ifcrush_role', 'first_name', 'last_name', 'letters', 'ifcrush_frat_fullname'
 	?>
 	<br>
-	<div class="fratrow">
-			<div class="fratid">
+	<div class="ifcrushtablerow">
+			<div class="ifcrushtablecellwide">
 				<?php
 					echo $thisfrat['ifcrush_frat_fullname'] . " " . $thisfrat['ifcrush_frat_letters'];
 				?>
 			</div><!-- end fratid-->
-			<div class="rushchair">
+			<div class="ifcrushtablecellwide">
 				<?php
 					echo $thisfrat['first_name'] . " " . $thisfrat['last_name'];
 				?>
 			</div><!-- end rushchair-->
-			<div class="frataction">
+			<div class="ifcrushtableauto">
 				nothing for now
 			</div><!-- end frataction-->
-	</div><br><!-- end fratrow-->
+	</div><!-- end ifcrushtablerow-->
 <?php
 }
+
+/** just keeping this around **/
+function create_rc_frat_menu($current){
+	$allfrats = get_all_frats();
+?>
+	<select name="fratID">
+<?php
+	echo "<option value=\"none\">select fraternity</option>\n";
+
+	foreach ($allfrat as $frat) {
+		$frat_fullname = $frat['ifcrush_frat_fullname']; 
+		$frat_letters = $frat['ifcrush_frat_letters']; 
+
+		if ($frat_letters == $current) {
+			echo "<option value=\"$frat_letters\" selected=\"selected\">$frat_fullname</option>\n";
+		} else {
+			echo "<option value=\"$frat_letters\">$frat_fullname</option>\n";
+		}
+	}
+?>
+	</select>
+<?php
+}
+
 ?>

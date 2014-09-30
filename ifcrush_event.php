@@ -3,15 +3,6 @@
  **  This file contains all the support functions for the table ifcrush_events
  **/
  
-//  $event_table_name = $wpdb->prefix . "ifc_event";    
-// 	$sql = 	"CREATE TABLE $event_table_name (
-// 		eventDate date not null,
-// 		title varchar(30) not null,
-// 		eventID int not null auto_increment,
-// 		fratID varchar(3) not null,
-// 		PRIMARY KEY(ID),
-// 		FOREIGN KEY(fratID) references $frat_table_name(letters)
-// 	) engine = InnoDB;";
 
 /** 
  * Display events for a fraternity
@@ -42,23 +33,6 @@ function ifcrush_display_events($frat_letters) {
 		create_event_table_footer(); // end the table
 	}
 }
-
-
-/**
- *  dummied up data - this could be obsolete
- **/
-function ifcrush_install_events() {
-	$events = array( array('eventDate' => '2014-9-15', 	'title'=> 'Sunday Dinner 1',	'fratID' => "LXA"),
-					 array('eventDate' => '2014-9-22', 	'title'=> 'Sunday Dinner 2',	'fratID' => "LXA"),
-					 array('eventDate' => '2014-9-29', 	'title'=> 'Sunday Dinner 3',	'fratID' => "LXA"),
-					 array('eventDate' => '2014-9-15', 	'title'=> 'Sunday Dinner 1',	'fratID' => "SAE"),
-					 array('eventDate' => '2014-9-22', 	'title'=> 'Sunday Dinner 2',	'fratID' => "SAE"),
-					 array('eventDate' => '2014-9-29', 	'title'=> 'Sunday Dinner 3',	'fratID' => "SAE"),
-					);
-	
-	foreach ($events as $event)
-   		addEvent($event);
-} // initial array of events (cooked data)
 
 /* This function is going to add an event for the passed $frat_letters
  * This function is called from ifcrush_frat with $frat_letters 
@@ -134,82 +108,58 @@ function deleteEvent($thisevent) {
 
 function create_event_table_header() {
 	?>
-		<table>
-		<tr>
-			<th>Date</th>
-			<th>Title</th>
-			<th>Actions</th>
-
-		</tr>
+		<div class="ifcrushtable">
+			<div class="ifcrushtablerow">
+				<div class="ifcrushtablecellnarrow">Date</div>
+				<div class="ifcrushtablecellnarrow">Title</div>
+				<div class="ifcrushtablecellauto"></div>
+			</div>
 	<?php
 }
 function create_event_table_footer() {
-	?></table><?php
+	?></div><?php
 }
 
 function create_event_add_row($frat_letters) {
 	?>
-		<form method="post">
-		<tr>
-				<td>
+		<div class="ifcrushtableaddrow">
+			<form method="post">
+				<div class="ifcrushtablecellnarrow">
 					<input type="text" name="eventDate" size=12 value="YYYY-DD-MM"/>
-				</td>
-				<td>
+				</div>
+				<div class="ifcrushtablecellnarrow">
 					<input type="text" name="title" size=20 value="enter event title"/>
-				</td>
-				<td>
+				</div>
+				<div class="ifcrushtablecellauto">
 					<input type="submit" name="action" value="Add Event"/>
-				</td>
-		</tr>
-		</form>
-
+				</div>
+			</form>
+		</div><!-- end ifcrushtableaddrow -->
 	<?php
 }
 
 function create_event_table_row($event) {
 	?>
-		<form method="post">
-		<tr>
-				<td>
+		<div class="ifcrushtablerow">
+			<form method="post">
+				<div class="ifcrushtablecellnarrow">
 					<input type="text" name="eventDate" size=20 value="<?php echo $event->eventDate; ?>"/>
-				</td>
-				<td>
+				</div>
+				<div class="ifcrushtablecellnarrow">
 					<input type="text" name="title" size=20 value="<?php echo $event->title; ?>"/>
-				</td>
-				<td>
-					<input type="hidden" name="eventID" value="<?php echo $event->eventID; ?>" />				
+					<input type="hidden" name="eventID" value="<?php echo $event->eventID; ?>" />
+				</div>				
+				<div class="ifcrushtablecellauto">
 					<input type="submit" name="action" value="Update Event"/>
 					<input type="submit" name="action" value="Delete Event"/>
 					<input type="submit" name="action" value="Show PNMS"/>
-				</td>
-		</tr>
-		</form>
-
+				</div>
+			</form>
+		</div>
 	<?php
 }
 
 
 /*** may be obsolete **/
-function create_rc_frat_menu($current){
-	$allfrats = get_all_frats();
-?>
-	<select name="fratID">
-<?php
-	echo "<option value=\"none\">select fraternity</option>\n";
-
-	foreach ($allfrat as $frat) {
-		$frat_fullname = $frat['ifcrush_frat_fullname']; 
-		$frat_letters = $frat['ifcrush_frat_letters']; 
-
-		if ($frat_letters == $current) {
-			echo "<option value=\"$frat_letters\" selected=\"selected\">$frat_fullname</option>\n";
-		} else {
-			echo "<option value=\"$frat_letters\">$frat_fullname</option>\n";
-		}
-	}
-?>
-	</select>
-<?php
-}
 
 ?>
