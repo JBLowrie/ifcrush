@@ -1,43 +1,39 @@
 jQuery(document).ready(function() {
+
+	/* sets up all the datepickers on the page */
     jQuery('.datepicker').datepicker({
         dateFormat : 'yy-mm-dd'
     });
-//    jQuery('#addEventButton').hover(function (){
-//         		alert("enter an event title please");
-// 
-//     	if (jQuery("#eventTitle").text() == "enter event title")
-//     		alert("enter an event title please");
-//     });
+    
+    jQuery('.eventForm').submit(function (event){
+        var errormessage = "";
+    	var title = jQuery("input[name='eventTitle']", this).val();
+    	var date  = jQuery("input[name='eventDate']", this).val();
+				
+		// event.preventDefault();
+// 		alert("Title " + title + " Date " + date);
+// 		return;
+		
+	    if (title == "enter event title" || title == "") {
+			errormessage = "Please enter the event title.  ";
+		}
+		if (date == "select date" || date == ""){
+			errormessage += "Please select a date.";
+		}    		
+
+     	if (errormessage != "") {	
+     		event.preventDefault();
+     		jQuery('#eventError').css("color", "red"); 
+     		jQuery('#eventError').text(errormessage);
+
+     	} else {
+     		jQuery('#eventError').text("");
+     		
+     	}
+		
+    });  
+    
 });
-function ifcrush_validateAddForm() {
-	/* Validating date field */
-	var x=document.forms["addeventform"]["eventDate"].value;
-	if (x=="select date") {
-		 alert("Please choose a date");
-		 return false;
-	}
-	/* Validating email field */
-	var x=document.forms["addeventform"]["title"].value;
-	
-	if (x==null || x=="" || x=="enter event title") {
-		 alert("Please enter and event title");
-		 return false;
-	}
-	return false; /* change to true later */
-}
-function ifcrush_validateUpdateForm() {
-	/* Validating date field */
-	var x=document.forms["updateventform"]["eventDate"].value;
-	if (x=="select date") {
-		 alert("Please choose a date");
-		 return false;
-	}
-	/* Validating email field */
-	var x=document.forms["addeventform"]["title"].value;
-	
-	if (x==null || x=="" || x=="enter event title") {
-		 alert("Please enter a title");
-		 return false;
-	}
-	return true;
-}
+
+
+

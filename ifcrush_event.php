@@ -51,7 +51,7 @@ function ifcrush_event_handle_form($frat_letters) {
 			$thisevent = array( 
 				'eventID'	=>  $_POST['eventID'],
 				'eventDate' =>  $_POST['eventDate'],
-				'title'  	=>  $_POST['title'],
+				'title'  	=>  $_POST['eventTitle'],
 				'fratID'	=>	$frat_letters
 			); // put the form input into an array
 			updateEvent($thisevent);
@@ -60,7 +60,7 @@ function ifcrush_event_handle_form($frat_letters) {
 			$thisevent = array( 
 				'eventID'	=>  $_POST['eventID'],
 				'eventDate' =>  $_POST['eventDate'],
-				'title'  	=>  $_POST['title'],
+				'title'  	=>  $_POST['eventTitle'],
 				'fratID'	=>	$frat_letters
 			); // put the form input into an array
 			deleteEvent($thisevent);
@@ -68,7 +68,7 @@ function ifcrush_event_handle_form($frat_letters) {
 		case "Add Event":
 			$thisevent = array( 
 				'eventDate' =>  $_POST['eventDate'],
-				'title'  	=>  $_POST['title'],
+				'title'  	=>  $_POST['eventTitle'],
 				'fratID'	=>	$frat_letters
 			); // put the form input into an array
 			addEvent($thisevent);
@@ -108,6 +108,7 @@ function deleteEvent($thisevent) {
 
 function create_event_table_header() {
 	?>
+		<div id="eventError"></div>
 		<div class="ifcrushtable">
 			<div class="ifcrushtablerow">
 				<div class="ifcrushtablecellnarrow">Date</div>
@@ -123,17 +124,16 @@ function create_event_table_footer() {
 function create_event_add_row($frat_letters) {
 	?>
 		<div class="ifcrushtableaddrow">
-			<form method="post" id="addeventform">
+			<form method="post" class="eventForm">
 				<div class="ifcrushtablecellnarrow">
 					<input type="text" name="eventDate" id="addDate" class="datepicker" value="select date">
 				</div>
 				<div class="ifcrushtablecellnarrow">
-					<input type="text" name="title" id="eventTitle" size=20 value="enter event title"/>
+					<input type="text" name="eventTitle" id="addEventTitle" size=20 value="enter event title"/>
 				</div>
 				<div class="ifcrushtablecellauto">
 					<input type="submit" name="action" id="addEventButton" value="Add Event"/>
 				</div>
-				<div id="addEventError"></div>
 			</form>
 		</div><!-- end ifcrushtableaddrow -->
 	<?php
@@ -142,12 +142,12 @@ function create_event_add_row($frat_letters) {
 function create_event_table_row($event) {
 	?>
 		<div class="ifcrushtablerow">
-			<form method="post" id="updateventform">
+			<form method="post" class="eventForm">
 				<div class="ifcrushtablecellnarrow">
 					<input type="text" name="eventDate" class="datepicker" value="<?php echo $event->eventDate;?>"/>
 				</div>
 				<div class="ifcrushtablecellnarrow">
-					<input type="text" name="title" size=20 value="<?php echo $event->title; ?>"/>
+					<input type="text" name="eventTitle" size=20 value="<?php echo $event->title; ?>"/>
 					<input type="hidden" name="eventID" value="<?php echo $event->eventID; ?>" />
 				</div>				
 				<div class="ifcrushtablecellauto">
