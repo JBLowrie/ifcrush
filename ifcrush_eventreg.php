@@ -269,7 +269,7 @@ function create_eventreg_add_row($eventID) {
 			<div class="ifcrushtablecellwide">
 				<?php echo get_event_title_by_eventID($eventID); ?>
 			</div>
-			<div class="ifcrushtablecellauto'>
+			<div class="ifcrushtablecellauto">
 				<input type="hidden" name="eventID" value="<?php echo $eventID; ?>"/>
 				<input type="submit" name="action" value="Register this PMN"/>
 			</div>
