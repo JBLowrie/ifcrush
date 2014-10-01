@@ -93,9 +93,19 @@ function safely_add_stylesheet() {
 add_action( 'wp_enqueue_scripts', 'safely_add_stylesheet' );
 
 /* supposedly the correct way to load jquery */
-add_action( 'wp_enqueue_script', 'load_jquery' );
+add_action( 'wp_enqueue_scripts', 'load_jquery' );
+
 function load_jquery() {
-    wp_enqueue_script( 'jquery' );
+	wp_enqueue_script( 'jquery' );
+	wp_enqueue_script( 'jquery-ui-core' );
+	wp_enqueue_script('jquery-ui-datepicker');
+	wp_enqueue_style('jquery-style', "http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css");
+}
+
+/* supposedly the correct way to load jquery */
+add_action( 'wp_enqueue_scripts', 'load_ifcrush' );
+function load_ifcrush(){
+    wp_enqueue_script( 'ifcrush_script', plugins_url( 'js/formvalidate.js' , __FILE__ ), array(), null, true);
 }
 
 /**

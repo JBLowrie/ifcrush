@@ -27,7 +27,7 @@ function ifcrush_display_events($frat_letters) {
 		create_event_table_footer(); // end the table
 	} 
 	else { 
-		?><h2>No events.  Add one!</h2><?php
+		?><h3>No events.  Add one!</h3><?php
 		create_event_table_header(); // make a table header
 		create_event_add_row($frat_letters);
 		create_event_table_footer(); // end the table
@@ -125,14 +125,15 @@ function create_event_add_row($frat_letters) {
 		<div class="ifcrushtableaddrow">
 			<form method="post" id="addeventform">
 				<div class="ifcrushtablecellnarrow">
-					<input type="text" name="eventDate" size=12 value="YYYY-DD-MM"/>
+					<input type="text" name="eventDate" id="addDate" class="datepicker" value="select date">
 				</div>
 				<div class="ifcrushtablecellnarrow">
-					<input type="text" name="title" size=20 value="enter event title"/>
+					<input type="text" name="title" id="eventTitle" size=20 value="enter event title"/>
 				</div>
 				<div class="ifcrushtablecellauto">
-					<input type="submit" name="action" value="Add Event"/>
+					<input type="submit" name="action" id="addEventButton" value="Add Event"/>
 				</div>
+				<div id="addEventError"></div>
 			</form>
 		</div><!-- end ifcrushtableaddrow -->
 	<?php
@@ -141,9 +142,9 @@ function create_event_add_row($frat_letters) {
 function create_event_table_row($event) {
 	?>
 		<div class="ifcrushtablerow">
-			<form method="post" >
+			<form method="post" id="updateventform">
 				<div class="ifcrushtablecellnarrow">
-					<input type="text" name="eventDate" size=20 value="<?php echo $event->eventDate; ?>"/>
+					<input type="text" name="eventDate" class="datepicker" value="<?php echo $event->eventDate;?>"/>
 				</div>
 				<div class="ifcrushtablecellnarrow">
 					<input type="text" name="title" size=20 value="<?php echo $event->title; ?>"/>
@@ -158,8 +159,4 @@ function create_event_table_row($event) {
 		</div>
 	<?php
 }
-
-
-/*** may be obsolete **/
-
 ?>
