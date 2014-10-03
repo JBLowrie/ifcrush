@@ -108,15 +108,33 @@ function load_ifcrush(){
     wp_enqueue_script( 'ifcrush_script', plugins_url( 'js/formvalidate.js' , __FILE__ ), array(), null, true);
 }
 
+
 /**
- * Redirect user after successful login.
+ * Redirect user after successful login. - this needs to be after the include
+ * for ifcrush_user_support.php because it uses the user functions
  *
  * @param string $redirect_to URL to redirect to.
  * @param string $request URL the user is coming from.
  * @param object $user Logged users data.
  * @return string
  */
+
 function my_login_redirect( $redirect_to, $request, $user ) {
+
+	function is_user_an_rc1($current_user){
+		$key = 'ifcrush_role';
+		$single = true;
+		$user_role = get_user_meta($current_user->ID, $key, $single ); 
+		return($user_role == 'rc');
+	}
+
+	function is_user_a_pnm1($current_user){
+		$key = 'ifcrush_role';
+		$single = true;
+		$user_role = get_user_meta($current_user->ID, $key, $single ); 
+		return($user_role == 'pnm');
+	}
+
 	//is there a user to check?
 	global $user;
 	if ( isset( $user->roles ) && is_array( $user->roles ) ) {
@@ -124,8 +142,11 @@ function my_login_redirect( $redirect_to, $request, $user ) {
 		if ( in_array( 'administrator', $user->roles ) ) {
 			// redirect them to the default place
 			return $redirect_to;
-		} else {
-			return home_url();
+		} else if (is_user_an_rc1($user)){
+			return home_url()."/?page_id=64"; // HACK HACK HACK fix the number
+
+		} else if (is_user_a_pnm1($user)){
+			return home_url()."/?page_id=66";  // HACK HACK HACK fix the number
 		}
 	} else {
 		return $redirect_to;
@@ -135,14 +156,17 @@ add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
 
 include 'ifcrush_event.php';
 include 'ifcrush_eventreg.php';
+include 'ifcrush_reports.php';
 /**
  * These are the functions to wire in the shortcodes
  **/ 
+ 
+include 'ifcrush_user_support.php';
+add_action( 'register_form', 'ifcrush_register_form' );
+
 include 'ifcrush_frat.php';  /** This has all the Frat table support **/
 add_shortcode( 'ifcrush_frat',   'ifcrush_frat' );
 
 include 'ifcrush_pnm.php';  /** This has all the Rushee table support **/
 add_shortcode( 'ifcrush_pnm',   'ifcrush_pnm' );
 
-include 'ifcrush_user_support.php';
-add_action( 'register_form', 'ifcrush_register_form' );?>

@@ -25,7 +25,6 @@ function ifcrush_display_reports(){
 		if (isset($_POST['reportype']))
 			ifcrush_report_handle_form();
 	}
-
 }
 
 function ifcrush_display_eventsbypnms_form($frat_letters){
@@ -100,7 +99,7 @@ function ifcrush_display_frat_events($frat) {
 /** This is a report function.  A function should be added for 
  ** each desired report, and the appropriate case should be added to handle form.
  **/ 
-function ifcrush_report_pnmsbyfratevent($frat) {
+function ifcrush_create_frat_report($frat_letters) {
 	global $wpdb;
 
 	$event_table_name 	= $wpdb->prefix . "ifc_event";
@@ -109,21 +108,22 @@ function ifcrush_report_pnmsbyfratevent($frat) {
 	$query = "SELECT * FROM $eventreg_table_name 
 					JOIN $event_table_name on 
 					$eventreg_table_name.eventID = $event_table_name.eventID
-					where fratID='$frat'";
-					
+					where fratID='$frat_letters' order by pnm_netID";
+		
+	//echo "query is $query";			
 	$allresults = $wpdb->get_results($query);
-	//echo "<pre>"; print_r($allresults); echo "</pre>";
 	
 	if ($allresults) {
-		foreach ($allresults as $result) {
-		?>
-			<div class="reportrow"><?php echo "$result->fratID $result->title ". 
-			get_pnm_name_by_netID($result->pnm_netID); ?></div>
-		<?php
+	
+		foreach ($allresults as $r){
+			?><div class="reportrow">
+				<?php echo get_pnm_name_by_netID($r->pnm_netID) . " $r->title "; ?>
+			</div>
+			<?php
 		}
-	} 
-	else { 
-		?><h2>No results!</h2><?php
+
+	} else {
+		echo "no results!";
 	}
 } 
 
@@ -148,4 +148,38 @@ function ifcrush_create_frat_menu($current){
 	</select>
 <?php
 }
+
+// 		/* get a timestamp */
+// 		$date = new DateTime();
+// 		$ts = $date->format( 'Y-m-d H:i:s' );
+// 		// A name with a time stamp, to avoid duplicate filenames
+// 		$filename = "report-$ts.csv";
+// 	
+// 		// Tells the browser to expect a CSV file and bring up the
+// 		// save dialog in the browser
+// 		header( 'Content-Type: text/csv' );
+// 		header( 'Content-Disposition: attachment;filename='.$filename);
+// 
+// 		// This opens up the output buffer as a "file"
+// 		$fp = fopen('php://output', 'w');
+// 
+// 		// Get the first record
+// 		$hrow = array($allresults[0]);
+// 
+// 		// Extracts the keys of the first record and writes them
+// 		// to the output buffer in CSV format
+// 		fputcsv($fp, array_keys($hrow));
+// 
+// 		// Now put the rest of the data in the file
+// 		foreach ($allresults as $result) {
+// 			//echo "loop<br>";
+// 			$resultarray = (array)$result;
+// 			fputcsv($fp, $resultarray);
+// 		}
+// 		// Close the output buffer (Like you would a file)
+//     	fclose($fp);
+//     
+//     	// Send the size of the output buffer to the browser
+//         $contLength = ob_get_length();
+//         header( 'Content-Length: '.$contLength);
 ?>

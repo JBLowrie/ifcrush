@@ -33,7 +33,9 @@ function ifcrush_frat(){
 
 	} else {	
 		/* List events and actions for this fraternity */
-		echo "Hello $frat_letters.  Here are your events.";
+		echo "Hello $frat_letters.";
+		ifcrush_display_request_report_form();
+		echo "Here are your events.";
 		ifcrush_display_events($frat_letters);
 	}
 	
@@ -41,6 +43,11 @@ function ifcrush_frat(){
 }
 function ifcrush_frat_handle_forms($action,$frat_letters){
 	switch ($action) {
+		case "Create Report":
+			echo "<h3>Report for $frat_letters</h3>";
+			ifcrush_create_frat_report($frat_letters);
+			break;
+		
 		case "Update Event":
 		case "Delete Event":
 		case "Add Event":
@@ -79,33 +86,6 @@ function ifcrush_frat_handle_forms($action,$frat_letters){
 			echo "unknown action : $action<br>";
 	}
 }
-/** 
- * ifcrush_display_frats - this is an admin function
- **/
-function ifcrush_display_frats(){
-
-	if (!is_user_logged_in()) {
-		echo "sorry you must be logged in to see and edit fraternities";
-		return;
-	}
-	
-	
-	global $wpdb;	   
-	
-	$allfrats = get_all_frats();
-
-	//echo "<pre>"; print_r($allfrats); echo "</pre>";
-
-	if ( $allfrats ) {
-		create_frat_table_header();
-		foreach ( $allfrats as $frat ){
-			create_frat_table_row($frat);
-		}	
-		create_frat_table_footer();
-	} else {
-		?><h2>No Frats!</h2><?php
-	}
-}
 /**
  *  I want an array of arrays (or objects) where each element is a pmn with their name
  *  and netID.  I'd like to use a select so there is only one query.
@@ -142,24 +122,51 @@ function is_rc($user){
 	return isset($user['ifcrush_role']) && ($user['ifcrush_role'] == 'rc');
 }
 function ifcrush_display_done_form($label){
-//	global $debug;
-//	if ($debug) echo "[ifcrush_display_done_form]";
 ?>
-<br>
-	<form method="post">
-	<input type="submit" value="<?php echo $label; ?>"/>
+<br><form method="post">
+		<input type="submit" value="<?php echo $label; ?>"/>
 	</form>
 <hr>
 <?php
 }
  
-
 function userInFrat($thisfrat){
 	if ( is_user_logged_in() ) {
 		$current_user = wp_get_current_user();
 		return true;
 	} else {
 		return false;
+	}
+}
+
+// this is just a button to request the report
+function ifcrush_display_request_report_form(){
+?>
+<form method="post">
+	<input type="submit" name="action" value="Create Report"/>	
+</form>
+<?php
+}
+/** 
+ * ifcrush_display_frats - this is an admin function
+ **/
+function ifcrush_display_frats(){
+	if (!is_user_logged_in()) {
+		echo "sorry you must be logged in to view fraternities";
+		return;
+	}
+	
+	global $wpdb;	   
+	$allfrats = get_all_frats();
+
+	if ( $allfrats ) {
+		create_frat_table_header();
+		foreach ( $allfrats as $frat ){
+			create_frat_table_row($frat);
+		}	
+		create_frat_table_footer();
+	} else {
+		?><h2>No Frats!</h2><?php
 	}
 }
 
@@ -184,7 +191,6 @@ function create_frat_table_footer(){
 	</div><!-- end frat table-->  
 <?php
 }
-
 
 function create_frat_table_row($thisfrat){
 	//print_r($thisfrat);

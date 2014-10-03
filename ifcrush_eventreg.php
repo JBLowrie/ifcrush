@@ -102,7 +102,6 @@ function ifcrush_display_register_pnm_at_event($eventID){
 	
 	if ($alleventregs) {
 		create_eventreg_table_header(); // make a table header
-		echo "<hr>";
 		create_eventreg_add_row($eventID);
 
 		foreach ($alleventregs as $eventreg) { // populate the rows with db info
@@ -132,12 +131,6 @@ function ifcrush_eventreg_add($pnm_netID, $eventID){
 }
 
 function ifcrush_eventreg_handle_form($action) { 
-
-// 	global $debug;
-// 	if ($debug) {
-// 		echo "[ifcrush_eventreg_handle_form]";
-// 		echo "<pre>"; print_r($_POST); echo "</pre>";
-// 	}
 	
 	switch ($action) {
 		case "add registration":
@@ -191,7 +184,7 @@ function create_pnm_netIDs_menu($current){
 ?>
 	<select name="pnm_netID">
 <?php
-	echo "<option value=\"none\">select PNM</option>\n";
+	echo "<option value=\"none\">enter NetID</option>\n";
 
 	foreach ($allpnms as $pnm) {
 		$pnm_netID = $pnm['ifcrush_netID']; 
@@ -221,7 +214,7 @@ function create_event_eventIDs_menu($current, $fratLetters){
 ?>
 	<select name="eventID">
 <?php
-	echo "<option value=\"none\">select event</option>\n";
+	echo "<option value=\"none\">Enter Event</option>\n";
 	foreach ($events as $event) {
 		//echo "comparing $guesttype $current";
 		if ($event->eventID == $current) {
@@ -262,7 +255,7 @@ function create_eventreg_table_footer() {
 function create_eventreg_add_row($eventID) {
 ?>
 	<div class="ifcrushtableaddrow">
-		<fieldset><form method="post">
+		<form method="post">
 			<div class="ifcrushtablecellwide">
 				<?php create_pnm_netIDs_menu("   "); ?>
 			</div>
@@ -273,10 +266,8 @@ function create_eventreg_add_row($eventID) {
 				<input type="hidden" name="eventID" value="<?php echo $eventID; ?>"/>
 				<input type="submit" name="action" value="Register this PMN"/>
 			</div>
-			</tr>
-		</form></fieldset>
-	</div><!-- end ifcrush tablerow-->
-	<hr>
+		</form>
+	</div>
 <?php
 }
 
@@ -297,7 +288,6 @@ function create_eventreg_table_row($eventreg) {
 			</div>
 		</form>
 	</div><!-- end ifcrush tablerow-->
-	<hr>
 <?php
 }
 ?>
