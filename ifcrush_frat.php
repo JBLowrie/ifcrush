@@ -17,7 +17,7 @@ function ifcrush_frat(){
 	}
 	
 	$current_user = wp_get_current_user();
-	if (is_user_an_rc($current_user)){
+	if (!is_user_a_pnm($current_user)){
 		$frat_letters =  get_frat_letters($current_user);
 	} else {
 		echo "sorry you must be a recruitment chair to use this page";

@@ -13,7 +13,7 @@ Author URI: nope
 global $ifcrush_db_version;
 $ifcrush_db_version = "1.0";
 global $debug;
-$debug = 1;
+$debug = 0;
 
 
 /**
@@ -142,12 +142,11 @@ function my_login_redirect( $redirect_to, $request, $user ) {
 		if ( in_array( 'administrator', $user->roles ) ) {
 			// redirect them to the default place
 			return $redirect_to;
-		} else if (is_user_an_rc1($user)){
-			return home_url()."/?page_id=64"; // HACK HACK HACK fix the number
-
 		} else if (is_user_a_pnm1($user)){
-			return home_url()."/?page_id=66";  // HACK HACK HACK fix the number
-		}
+			return home_url()."/?page_id=8";  // HACK HACK HACK fix the number
+		} else {
+			return home_url()."/?page_id=5"; // HACK HACK HACK fix the number
+		} 
 	} else {
 		return $redirect_to;
 	}

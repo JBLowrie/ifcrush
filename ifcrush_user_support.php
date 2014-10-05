@@ -27,7 +27,7 @@ function ifcrush_register_form() {
 	<p>
 	<label for="school">School
 <?php
-	createmenu("school", array('Weinberg','Communications','Education and Social Policy','Medill','Bienin'));
+	createmenu("school", array('Weinberg','McCormick','Communications','Education and Social Policy','Medill','Bienin'));
 ?>
 	</label>
 	</p>
@@ -89,7 +89,7 @@ function is_user_an_rc($current_user){
 	$key = 'ifcrush_role';
 	$single = true;
 	$user_role = get_user_meta($current_user->ID, $key, $single ); 
-	return($user_role == 'rc');
+	return($user_role != 'pnm');
 }
 
 function get_frat_letters($current_user){
