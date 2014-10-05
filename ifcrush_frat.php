@@ -33,9 +33,11 @@ function ifcrush_frat(){
 
 	} else {	
 		/* List events and actions for this fraternity */
-		echo "Hello $frat_letters.";
-		ifcrush_display_request_report_form();
+		echo "Hello $frat_letters. ";
 		echo "Here are your events.";
+		echo "<br>";
+		ifcrush_display_request_report_form();
+	
 		ifcrush_display_events($frat_letters);
 	}
 	
@@ -44,6 +46,7 @@ function ifcrush_frat(){
 function ifcrush_frat_handle_forms($action,$frat_letters){
 	switch ($action) {
 		case "Create Report":
+			ifcrush_display_done_form("Return to Fraternity Home");
 			echo "<h3>Report for $frat_letters</h3>";
 			ifcrush_create_frat_report($frat_letters);
 			break;
@@ -56,7 +59,7 @@ function ifcrush_frat_handle_forms($action,$frat_letters){
 			break;
 			
 		case "Show PNMS":
-			ifcrush_display_done_form("Finished showing PNMS");
+			ifcrush_display_done_form("Return to Fraternity Home");
 			ifcrush_display_register_pnm_at_event($_POST['eventID'], $frat_letters);
 			break;
 			
