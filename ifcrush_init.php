@@ -56,11 +56,12 @@ function ifcrush_install(){
 }
 register_activation_hook( __FILE__, 'ifcrush_install' );
 
-//register_activation_hook( __FILE__, 'ifcrush_install_data' );
-
 
 /** ifcrush_deactivate() - cleans up when the plugin is deactived, 
  ** delete database tables.  Careful of the order of deletion!
+ ** KBL - I removed the table drop.  Usually we do not want to remove
+ ** events and event registrations.  Admins can remove manually if needed.
+ ** JBL - You and I need to find out more about updates.
  **/
 function ifcrush_deactivate()
 {
@@ -69,17 +70,17 @@ function ifcrush_deactivate()
 	/** drop this first before deleting event **/    
 	$table_name = $wpdb->prefix . "ifc_eventreg";    
     $sql = "DROP TABLE IF EXISTS $table_name;";
-    $wpdb->query($sql);
+    //$wpdb->query( $sql );
     
  	/** drop this first before deleting frat **/       
     $table_name = $wpdb->prefix . "ifc_bid";    
     $sql = "DROP TABLE IF EXISTS $table_name;";
-    $wpdb->query($sql);
+    //$wpdb->query( $sql );
     
     /** drop this first before deleting frat **/       
     $table_name = $wpdb->prefix . "ifc_event";    
     $sql = "DROP TABLE IF EXISTS $table_name;";
-    $wpdb->query($sql);
+	//$wpdb->query( $sql );
 
 }
 register_deactivation_hook( __FILE__, 'ifcrush_deactivate');
@@ -98,8 +99,8 @@ add_action( 'wp_enqueue_scripts', 'load_jquery' );
 function load_jquery() {
 	wp_enqueue_script( 'jquery' );
 	wp_enqueue_script( 'jquery-ui-core' );
-	wp_enqueue_script('jquery-ui-datepicker');
-	wp_enqueue_style('jquery-style', "http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css");
+	wp_enqueue_script( 'jquery-ui-datepicker' );
+	wp_enqueue_style( 'jquery-style', "http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" );
 }
 
 /* supposedly the correct way to load jquery */
@@ -108,6 +109,24 @@ function load_ifcrush(){
     wp_enqueue_script( 'ifcrush_script', plugins_url( 'js/formvalidate.js' , __FILE__ ), array(), null, true);
 }
 
+
+
+
+include 'ifcrush_event.php';
+include 'ifcrush_eventreg.php';
+include 'ifcrush_reports.php';
+
+/**
+ * These are the functions to wire in the shortcodes
+ **/ 
+include 'ifcrush_user_support.php';
+add_action( 'register_form', 'ifcrush_register_form' );
+
+include 'ifcrush_frat.php';  /** This has all the Frat table support **/
+add_shortcode( 'ifcrush_frat',   'ifcrush_frat' );
+
+include 'ifcrush_pnm.php';  /** This has all the Rushee table support **/
+add_shortcode( 'ifcrush_pnm',   'ifcrush_pnm' );
 
 /**
  * Redirect user after successful login. - this needs to be after the include
@@ -120,21 +139,6 @@ function load_ifcrush(){
  */
 
 function my_login_redirect( $redirect_to, $request, $user ) {
-
-	function is_user_an_rc1($current_user){
-		$key = 'ifcrush_role';
-		$single = true;
-		$user_role = get_user_meta($current_user->ID, $key, $single ); 
-		return($user_role == 'rc');
-	}
-
-	function is_user_a_pnm1($current_user){
-		$key = 'ifcrush_role';
-		$single = true;
-		$user_role = get_user_meta($current_user->ID, $key, $single ); 
-		return($user_role == 'pnm');
-	}
-
 	//is there a user to check?
 	global $user;
 	if ( isset( $user->roles ) && is_array( $user->roles ) ) {
@@ -142,30 +146,13 @@ function my_login_redirect( $redirect_to, $request, $user ) {
 		if ( in_array( 'administrator', $user->roles ) ) {
 			// redirect them to the default place
 			return $redirect_to;
-		} else if (is_user_a_pnm1($user)){
-			return home_url()."/?page_id=8";  // HACK HACK HACK fix the number
-		} else {
-			return home_url()."/?page_id=5"; // HACK HACK HACK fix the number
+		} else if ( is_user_a_pnm( $user ) ) {
+			return home_url("/?page_id=66");  // HACK HACK HACK fix the number
+		} else if ( is_user_an_rc( $user ) ) {
+			return home_url("/?page_id=64"); // HACK HACK HACK fix the number
 		} 
 	} else {
 		return $redirect_to;
 	}
 }
 add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
-
-include 'ifcrush_event.php';
-include 'ifcrush_eventreg.php';
-include 'ifcrush_reports.php';
-/**
- * These are the functions to wire in the shortcodes
- **/ 
- 
-include 'ifcrush_user_support.php';
-add_action( 'register_form', 'ifcrush_register_form' );
-
-include 'ifcrush_frat.php';  /** This has all the Frat table support **/
-add_shortcode( 'ifcrush_frat',   'ifcrush_frat' );
-
-include 'ifcrush_pnm.php';  /** This has all the Rushee table support **/
-add_shortcode( 'ifcrush_pnm',   'ifcrush_pnm' );
-

@@ -1,109 +1,114 @@
 <?php
 /**
- **  This file contains all the support functions for the table ifcrush_events
+ **  This file contains all the support functions for the table ifcrush_events.
+ **  Events can only be created by recruitment (or rush) chairs.
+ **  The event table is created with the SQL below.
+ **  fratID is user meta ifcrush_frat_letters
+ **
+ ** CREATE TABLE $event_table_name (
+ ** 		eventDate date not null,
+ ** 		title varchar(30) not null,
+ ** 		eventID int not null auto_increment,
+ ** 		fratID varchar(3) not null,
+ ** 		PRIMARY KEY(eventID)
+ ** 	) engine = InnoDB;
  **/
  
 
 /** 
  * Display events for a fraternity
+ * Args - the fraternity letters specified by the meta data ifcrush_frat_letters
+ *
  **/
-function ifcrush_display_events($frat_letters) {
+function ifcrush_display_events( $frat_letters ) {
 	
 	global $wpdb;
 	
 	$event_table_name = $wpdb->prefix . "ifc_event";
 	$query = "SELECT * FROM $event_table_name where fratID='$frat_letters'";
-	$allevents = $wpdb->get_results($query);
+	$allevents = $wpdb->get_results( $query );
 	
-	if ($allevents) {
-		create_event_table_header(); // make a table header
-		create_event_add_row($frat_letters);
+	create_event_table_header(); 
+	create_event_add_row( $frat_letters );
 
-		foreach ($allevents as $event) { // populate the rows with db info
-			//echo "<pre>"; print_r($event); echo "</pre>";
-
-			create_event_table_row($event);
+	if ( $allevents ) {
+		foreach ( $allevents as $event ) {
+			create_event_table_row( $event );
 		}
-		create_event_table_footer(); // end the table
-	} 
-	else { 
+	} else { 
 		?><h3>No events.  Add one!</h3><?php
-		create_event_table_header(); // make a table header
-		create_event_add_row($frat_letters);
-		create_event_table_footer(); // end the table
 	}
+			
+	create_event_table_footer(); // end the table
 }
 
-/* This function is going to add an event for the passed $frat_letters
+/**
+ * Fraternity events are displayed with three action buttons:
+ * Updated, Delete, and Show PNMs. 
+ * This function is the form handler for all three.
+ * This function is going to add an event for the passed $frat_letters
  * This function is called from ifcrush_frat with $frat_letters 
- */
+ **/
 function ifcrush_event_handle_form($frat_letters) { 
 
 	global $debug;
-	if ($debug){
+	if ( $debug ){
 			echo "[ifcrush_event_handle_form] $frat_letters";
 			echo "<pre>"; print_r($_POST); echo "</pre>";
 	}
 	
-	$action = $_POST['action'];
-	switch ($action) {
+	$thisevent = array( 
+				/** eventID will be null on insert **/
+				'eventID'	=>  ( isset( $_POST['eventID'] ) ? $_POST['eventID']: ""),
+				'eventDate' =>  $_POST['eventDate'],
+				'title'  	=>  $_POST['eventTitle'],
+				'fratID'	=>	$frat_letters
+	); // put the form input into an array
+
+	switch ( $_POST['action'] ) {
 		case "Update Event":
-			$thisevent = array( 
-				'eventID'	=>  $_POST['eventID'],
-				'eventDate' =>  $_POST['eventDate'],
-				'title'  	=>  $_POST['eventTitle'],
-				'fratID'	=>	$frat_letters
-			); // put the form input into an array
-			updateEvent($thisevent);
+			updateEvent( $thisevent );
 			break;
+			
 		case "Delete Event":
-			$thisevent = array( 
-				'eventID'	=>  $_POST['eventID'],
-				'eventDate' =>  $_POST['eventDate'],
-				'title'  	=>  $_POST['eventTitle'],
-				'fratID'	=>	$frat_letters
-			); // put the form input into an array
-			deleteEvent($thisevent);
+			deleteEvent( $thisevent );
 			break;
+			
 		case "Add Event":
-			$thisevent = array( 
-				'eventDate' =>  $_POST['eventDate'],
-				'title'  	=>  $_POST['eventTitle'],
-				'fratID'	=>	$frat_letters
-			); // put the form input into an array
-			addEvent($thisevent);
+			addEvent( $thisevent );
 			break;
+			
 		default:
 			echo "[ifcrush_event_handle_form]: bad action";
 	}
 } 
 
 /* Event_handler_form helpers */
-function addEvent($thisevent) {
+function addEvent( $thisevent ) {
 	global $wpdb;
 	
 	$table_name = $wpdb->prefix . "ifc_event";
-	$rows_affected = $wpdb->insert($table_name, $thisevent);
+	$rows_affected = $wpdb->insert( $table_name, $thisevent );
 	
-	if ($rows_affected == 0) {
+	if (0 == $rows_affected ) {
 		echo "INSERT ERROR for " . $thisevent['eventDate']. $thisevent['title'] . $thisevent['frat'];
 	}
 	return $rows_affected;
 } // adds a event to the table if addEvent is tagged
 
-function updateEvent($thisevent) {
+function updateEvent( $thisevent ) {
 	global $wpdb;
 	
 	$table_name = $wpdb->prefix . "ifc_event";
-	$where = array('eventID' => $thisevent['eventID']);
+	$where = array( 'eventID' => $thisevent['eventID'] );
 	$wpdb->update( $table_name, $thisevent, $where );
-} // updates a event with a matching netID if updateEvent is tagged
+} // updates a event with a matching eventID if updateEvent is tagged
 
-function deleteEvent($thisevent) {
+function deleteEvent( $thisevent ) {
 	global $wpdb;
 	
 	$table_name = $wpdb->prefix . "ifc_event";
-	$wpdb->delete( $table_name, $thisevent);
+	$wpdb->delete( $table_name, $thisevent );
 } // deletes a event if deleteEvent is tagged
 
 function create_event_table_header() {
