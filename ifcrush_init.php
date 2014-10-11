@@ -26,29 +26,30 @@ function ifcrush_install(){
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 	$event_table_name = $wpdb->prefix . "ifc_event";    
-	$sql = 	"CREATE TABLE $event_table_name (
+	$sql = 	"CREATE TABLE IF NOT EXISTS $event_table_name (
 		eventDate date not null,
 		title varchar(30) not null,
 		eventID int not null auto_increment,
 		fratID varchar(3) not null,
-		PRIMARY KEY(eventID)
+		PRIMARY KEY  (eventID)
 	) engine = InnoDB;";
    dbDelta( $sql );
 
 	$table_name = $wpdb->prefix . "ifc_bid";    
-	$sql = 	"CREATE TABLE $table_name(
-		bidstat int not null,
-		netID		varchar(6) not null,
-		fratID		varchar(3) not null
+	$sql = 	"CREATE TABLE IF NOT EXISTS $table_name(
+		bidstat int not null,	
+		netID varchar(6) not null,
+		fratID varchar(3) not null,
+		PRIMARY KEY  (netID, fratID)
 	) engine = InnoDB;";
    dbDelta( $sql );
 
 	$table_name = $wpdb->prefix . "ifc_eventreg";    
-	$sql = 	"CREATE TABLE $table_name (
-		pnm_netID		varchar(6) not null,
+	$sql = 	"CREATE TABLE IF NOT EXISTS $table_name (
+		pnm_netID varchar(6) not null,
 		eventID int not null auto_increment,
-		PRIMARY KEY(pnm_netID, eventID),
-		FOREIGN KEY (eventID) references $event_table_name(eventID)
+		PRIMARY KEY  (pnm_netID, eventID),
+		FOREIGN KEY  (eventID) references $event_table_name(eventID)
 	) engine = InnoDB;";
    	dbDelta( $sql );
    
@@ -109,9 +110,6 @@ function load_ifcrush(){
     wp_enqueue_script( 'ifcrush_script', plugins_url( 'js/formvalidate.js' , __FILE__ ), array(), null, true);
 }
 
-
-
-
 include 'ifcrush_event.php';
 include 'ifcrush_eventreg.php';
 include 'ifcrush_reports.php';
@@ -127,6 +125,9 @@ add_shortcode( 'ifcrush_frat',   'ifcrush_frat' );
 
 include 'ifcrush_pnm.php';  /** This has all the Rushee table support **/
 add_shortcode( 'ifcrush_pnm',   'ifcrush_pnm' );
+
+include 'ifcrush_admin.php';  /** This has all the admin support **/
+add_action( 'admin_menu', 'ifcrush_admin_menu' );
 
 /**
  * Redirect user after successful login. - this needs to be after the include

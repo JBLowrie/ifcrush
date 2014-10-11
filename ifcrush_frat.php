@@ -43,7 +43,7 @@ function ifcrush_frat(){
 function ifcrush_frat_handle_forms( $action,$frat_letters ){
 	switch ( $action ) {
 		case "Create Report":
-			ifcrush_display_done_form( "Return to Fraternity Home" );
+			ifcrush_display_done_form( "Return to Event List" );
 			echo "<h3>Report for $frat_letters</h3>";
 			ifcrush_create_frat_report( $frat_letters );
 			break;
@@ -56,7 +56,7 @@ function ifcrush_frat_handle_forms( $action,$frat_letters ){
 			break;
 			
 		case "Show PNMS":
-			ifcrush_display_done_form( "Return to Fraternity Home" );
+			ifcrush_display_done_form( "Return to Event List" );
 			ifcrush_display_register_pnm_at_event( $_POST['eventID'], $frat_letters );
 			break;
 			
@@ -145,14 +145,53 @@ function ifcrush_display_request_report_form(){
 </form>
 <?php
 }
+/* display frats in a list */
+function ifcrush_list_frats(){
+global $wpdb;	   
+	$allfrats = get_all_frats();
+
+	if ( $allfrats ) {
+		echo "<table>";
+		echo "<tr><th>Letters</th><th>Fullname</th><th></th></tr>";
+
+		foreach ( $allfrats as $thisfrat ){
+			$letters = $thisfrat['ifcrush_frat_letters'];
+			$fullname = $thisfrat['ifcrush_frat_fullname'];
+			echo "<tr><td>$letters</td><td>$fullname</td><td>Add Report</td></tr>";
+		}	
+		echo "</table>";
+	} else {
+		?><h2>No Frats!</h2><?php
+	}
+}
+
+function ifcrush_list_frats_and_events(){
+global $wpdb;	   
+	$allfrats = get_all_frats();
+
+	if ( $allfrats ) {
+		echo "<table>";
+		echo "<tr><th>Letters</th><th>Fullname</th><th></th></tr>";
+
+		foreach ( $allfrats as $thisfrat ){
+			$letters = $thisfrat['ifcrush_frat_letters'];
+			$fullname = $thisfrat['ifcrush_frat_fullname'];
+			echo "<tr><td>$letters</td><td>$fullname</td><td>Add Report</td></tr>";
+		}	
+		echo "</table>";
+	} else {
+		?><h2>No Frats!</h2><?php
+	}
+}
+
 /** 
  * ifcrush_display_frats - this is an admin function
  **/
 function ifcrush_display_frats(){
-	if ( false == is_user_logged_in() ) {
-		echo "sorry you must be logged in to view fraternities";
-		return;
-	}
+	// if ( false == is_user_admin() ) {
+// 		echo "sorry you must be an admin to view fraternities";
+// 		return;
+// 	}
 	
 	global $wpdb;	   
 	$allfrats = get_all_frats();
@@ -172,10 +211,10 @@ function create_frat_table_header(){
 	?>
 	<div class="ifcrushtable">
 		<div class="ifcrushtablerow">
-				<div class="ifcrushtablecellwide">
+				<div class="ifcrushtablecellnarrow">
 					Fraternity
 				</div>
-				<div class="ifcrushtablecellwide">
+				<div class="ifcrushtablecellnarrow">
 					Recruitment chair
 				</div>
 				<div class="ifcrushtablecellauto">
@@ -191,17 +230,15 @@ function create_frat_table_footer(){
 }
 
 function create_frat_table_row($thisfrat){
-	//print_r($thisfrat);
-	//'ifcrush_role', 'first_name', 'last_name', 'letters', 'ifcrush_frat_fullname'
 	?>
 	<br>
 	<div class="ifcrushtablerow">
-			<div class="ifcrushtablecellwide">
+			<div class="ifcrushtablecellnarrow">
 				<?php
 					echo $thisfrat['ifcrush_frat_fullname'] . " " . $thisfrat['ifcrush_frat_letters'];
 				?>
 			</div><!-- end fratid-->
-			<div class="ifcrushtablecellwide">
+			<div class="ifcrushtablecellnarrow">
 				<?php
 					echo $thisfrat['first_name'] . " " . $thisfrat['last_name'];
 				?>
