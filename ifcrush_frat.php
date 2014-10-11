@@ -43,9 +43,12 @@ function ifcrush_frat(){
 function ifcrush_frat_handle_forms( $action,$frat_letters ){
 	switch ( $action ) {
 		case "Create Report":
+		 	
 			ifcrush_display_done_form( "Return to Event List" );
-			echo "<h3>Report for $frat_letters</h3>";
+			echo "<h2>Report for $frat_letters</h2>";
+			echo '<div id="accordion">';
 			ifcrush_create_frat_report( $frat_letters );
+			echo '</div>';
 			break;
 		
 		case "Update Event":
@@ -150,7 +153,9 @@ function ifcrush_list_frats(){
 global $wpdb;	   
 	$allfrats = get_all_frats();
 
+	echo "<h3>List of Fraternities</h3>";
 	if ( $allfrats ) {
+		echo "<div>";
 		echo "<table>";
 		echo "<tr><th>Letters</th><th>Fullname</th><th></th></tr>";
 
@@ -159,17 +164,19 @@ global $wpdb;
 			$fullname = $thisfrat['ifcrush_frat_fullname'];
 			echo "<tr><td>$letters</td><td>$fullname</td><td>Add Report</td></tr>";
 		}	
-		echo "</table>";
+		echo "</table></div>";
 	} else {
-		?><h2>No Frats!</h2><?php
+		?><div>No Frats!</div><?php
 	}
 }
 
 function ifcrush_list_frats_and_events(){
-global $wpdb;	   
+	global $wpdb;	   
 	$allfrats = get_all_frats();
 
 	if ( $allfrats ) {
+		echo "<h3>Fraternities and Events</h3>";
+
 		echo "<table>";
 		echo "<tr><th>Letters</th><th>Fullname</th><th></th></tr>";
 

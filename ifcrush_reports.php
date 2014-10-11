@@ -99,27 +99,23 @@ function ifcrush_create_frat_reports(){
 	$allfrats = get_all_frats();
 
 	if ( $allfrats ) {
-			foreach ( $allfrats as $thisfrat ){
-				$letters = $thisfrat['ifcrush_frat_letters'];
-				echo "<h4>Report for $letters</h4>";
-				ifcrush_create_frat_report( $letters );
-				echo "<hr>";
-			}
+		foreach ( $allfrats as $thisfrat ){
+			$letters = $thisfrat['ifcrush_frat_letters'];
+			ifcrush_create_frat_report( $letters );
+		}
 	}
-
 }
-
 
 /** This is a report function.  A function should be added for 
  ** each desired report, and the appropriate case should be added to handle form.
  **/ 
 function ifcrush_create_frat_report( $frat_letters ) {	
 
-	$no_event_data =  ! ifcrush_create_frat_report_pnms_event_title( $frat_letters );
+	$no_event_data = ! ifcrush_create_frat_report_pnms_event_title( $frat_letters );
 	$no_count_data = ! ifcrush_create_frat_report_pnms_event_count( $frat_letters );
-	
+
 	if ( $no_event_data && $no_count_data ) {
-		echo "<h3>No report data!</h3>";
+		echo "<h3>No report data for $frat_letters</h3><div></div>";
 	}
 } 
 
@@ -137,13 +133,16 @@ function ifcrush_create_frat_report_pnms_event_title( $frat_letters ){
 	$allresults = $wpdb->get_results($query);
 	
 	if ( $allresults ) {
-		echo "<h4>PNM Event Attendance List</h4>";
+		echo "<h3>PNM Event Attendance List for $frat_letters</h3>
+			  <div>";
 		echo "<table><tr><th>Net ID</th><th>Name</th><th>Event Title</th></tr>";
 		foreach ( $allresults as $r ){
 			echo "<tr><td>$r->pnm_netID</td><td>" . get_pnm_name_by_netID($r->pnm_netID) .
 							"</td><td>$r->title</td></tr>"; 
 		}
-		echo "</table>";
+		echo "</table>
+		      </div>
+		      ";
 		return true;
 	} 
 	return false;
@@ -165,13 +164,16 @@ function ifcrush_create_frat_report_pnms_event_count( $frat_letters ){
 	$allresults = $wpdb->get_results($query);
 	
 	if ( $allresults ) {
-		echo "<h4>PNM Event Attendance Count</h4>";
+		echo "<h3>PNM Event Attendance Count for $frat_letters</h3>
+		      <div>";
 		echo "<table><tr><th>Net ID</th><th>Name</th><th>Number of events attended</th></tr>";
 		foreach ( $allresults as $r ){
 			echo "<tr><td>$r->pnm_netID</td><td>" . get_pnm_name_by_netID($r->pnm_netID) .
 							"</td><td>$r->num_events</td></tr>"; 
 		}
-		echo "</table>";
+		echo "</table>
+		      </div>
+		      ";
 		return true;
 	} 
 	return false;

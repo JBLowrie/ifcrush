@@ -1,19 +1,19 @@
+   jQuery(function() {
+		jQuery( "#accordion" ).accordion({ collapsible: true });
+	});
+
 jQuery(document).ready(function() {
 
 	/* sets up all the datepickers on the page */
     jQuery('.datepicker').datepicker({
         dateFormat : 'yy-mm-dd'
     });
-    
+      
     jQuery('.eventForm').submit(function (event){
         var errormessage = "";
     	var title = jQuery("input[name='eventTitle']", this).val();
     	var date  = jQuery("input[name='eventDate']", this).val();
-				
-		// event.preventDefault();
-// 		alert("Title " + title + " Date " + date);
-// 		return;
-		
+						
 	    if (title == "enter event title" || title == "") {
 			errormessage = "Please enter the event title.  ";
 		}

@@ -9,11 +9,14 @@ function ifcrush_admin_tools() {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 	echo '<div class="wrap">';
+	echo '<div id="accordion">';
+
 	// display a list of frats.  Then allow the admin to show the report for each.
 	ifcrush_list_frats();
-	echo "<hr>";
 	ifcrush_create_frat_reports();
 	echo '</div>';
+	echo '</div>';
+
 }
 
 
