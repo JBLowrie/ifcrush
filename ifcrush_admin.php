@@ -11,6 +11,9 @@ function ifcrush_admin_tools() {
 	echo '<div class="wrap">';
 	echo '<div id="accordion">';
 
+	// display a list of pnms
+	ifcrush_list_pnms();
+	
 	// display a list of frats.  Then allow the admin to show the report for each.
 	ifcrush_list_frats();
 	ifcrush_create_frat_reports();

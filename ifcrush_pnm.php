@@ -17,7 +17,7 @@ function ifcrush_pnm(){
 	}
 	
 	$current_user = wp_get_current_user();
-	if (is_user_a_pnm($current_user)){
+	if ( is_user_a_pnm( $current_user ) ){
 		/* get the frat of the rc */
 		$pnm_netID =  get_pnm_netID($current_user);
 	} else {
@@ -36,36 +36,46 @@ function ifcrush_pnm(){
 	/** all done **/
 }
  
-/* kbl note is_admin() is a wp function */
-function ifcrush_isuserrc(){
-	if ( is_user_logged_in() ) {
-		$current_user = wp_get_current_user();
-		return true;
+/* display pnms in a list */
+function ifcrush_list_pnms(){   
+	$allpnms = get_all_pnm_ids_names();
+
+	echo "<h3>List of Potential New Members</h3>";
+	if ( $allpnms ) {
+		echo "<div>";
+		echo "<table>";
+		echo "<tr><th>Letters</th><th>Fullname</th><th></th></tr>";
+
+		foreach ( $allpnms as $thispnm ){
+			$netID = $thispnm->ifcrush_netID;
+			$fullname = $thispnm->last_name . ", " . $thispnm->first_name;
+			echo "<tr><td>$netID</td><td>$fullname</td><td></td></tr>";
+		}	
+		echo "</table></div>";
 	} else {
-		return false;
+		?><div>No PNMs!</div><?php
 	}
 }
 
 //Display PNMs
 function ifcrush_display_pnms() {	
 	
-	$allpnms = get_all_pmns();
+	$allpnms = get_all_pnm_ids_names();
 	
 	if (!is_user_logged_in()) {
 		echo "sorry you must be logged in to see pnms";
 		return;
 	}
 	
-		if ($allpnms) {
-			create_pnm_table_header(); // make a table header
-			foreach ($allpnms as $pnm) { 
-					create_pnm_table_row($pnm);
-			}
-			create_pnm_table_footer(); // end the table
-		} 
-		else { 
-			?><h2>No Potential New Members!</h2><?php
+	if ( $allpnms ) {
+		create_pnm_table_header(); // make a table header
+		foreach ( $allpnms as $pnm ) { 
+				create_pnm_table_row($pnm);
 		}
+		create_pnm_table_footer(); // end the table
+	} else { 
+		?><h2>No Potential New Members!</h2><?php
+	}
 }
 
 function create_pnm_table_header(){
@@ -92,42 +102,35 @@ function create_pnm_table_footer(){
 /**
  *  I want an array of arrays (or objects) where each element is a pmn with their name
  *  and netID.  I'd like to use a select so there is only one query.
- *  So, I get all the meta data for users (I don't need the user table)
- *  and create one array element for each user with meta data.
- *  Then I copy just the users I want into another array. 
-  **/
-function get_all_pmns(){
+ *  This funciton returns an array of objects.
+ **/
+function get_all_pnm_ids_names(){
 
 	global $wpdb;		
 	$table_name = $wpdb->prefix . "usermeta";
-	$query = "select * from $table_name where meta_key IN 
- 				('ifcrush_netID', 'ifcrush_role', 'first_name', 'last_name',
- 				'ifcrush_residence','ifcrush_school','ifcrush_yog',
- 				'ifcrush_affiliation')";
+	$query = "select um1.user_id, 
+um1.meta_value as ifcrush_netID, 
+um2.meta_value as last_name,
+um3.meta_value as first_name
+from wp_usermeta as um1 
+left join wp_usermeta as um2 on um1.user_id = um2.user_id 
+left join wp_usermeta as um3 on um1.user_id = um3.user_id 
+where   
+um3.meta_key='first_name' AND 
+um2.meta_key='last_name' AND 
+um1.meta_key='ifcrush_netID' AND
+um1.user_id IN (SELECT user_id FROM wp_usermeta WHERE meta_key='ifcrush_role' and meta_value='pnm')
+order by ifcrush_netID";
 
-	$all_meta_raw = $wpdb->get_results($query);
+	$allpnms= $wpdb->get_results( $query );
 	
-	/* get all the users */
-	$allusers=array();
-	foreach ($all_meta_raw as $meta){
-		$allusers[$meta->user_id][$meta->meta_key] = $meta->meta_value;
-	}
-
-	/* now just the ones we want */
-	$allpnms=array();
-	foreach ($allusers as $user){
-		if (is_pnm($user)) {
-			array_push($allpnms, $user);
-		}
-	}
-
-	return($allpnms);
+	return( $allpnms );
 }
-function is_pnm($user){
-	return isset($user['ifcrush_role']) && ($user['ifcrush_role'] == 'pnm');
+function is_pnm( $user ){
+	return isset( $user['ifcrush_role'] ) && ( $user['ifcrush_role'] == 'pnm' );
 }
 
-function create_pnm_table_row($pnm) {
+function create_pnm_table_row( $pnm ) {
 ?>
 		<div>
 			<form method="post">
@@ -158,7 +161,7 @@ function create_pnm_table_row($pnm) {
  * I don't like doing it this way because there are extra queries.  We should
  * fix the places where this function is needed
  **/
-function get_pnm_name_by_netID($netID){
+function get_pnm_name_by_netID( $netID ){
 	global $wpdb;	   
 
 	$table_name = $wpdb->prefix . "usermeta";

@@ -98,26 +98,20 @@ function get_all_frats(){
 
 	global $wpdb;		
 	$table_name = $wpdb->prefix . "usermeta";
-	$query = "select * from $table_name where meta_key IN 
- 				('ifcrush_role', 'first_name', 'last_name', 'ifcrush_frat_letters', 'ifcrush_frat_fullname')";
+	$query = "select 
+um1.meta_value as ifcrush_frat_letters, 
+um2.meta_value as ifcrush_frat_fullname
+from wp_usermeta as um1 
+left join wp_usermeta as um2 on um1.user_id = um2.user_id 
+where   
+um1.meta_key='ifcrush_frat_letters' AND 
+um2.meta_key='ifcrush_frat_fullname' AND 
+um1.user_id IN (SELECT user_id FROM wp_usermeta WHERE meta_key='ifcrush_role' and meta_value='rc')
+order by ifcrush_frat_fullname";
 
-	$all_meta_raw = $wpdb->get_results( $query );
-	
-	/* get all the users */
-	$allusers=array();
-	foreach ( $all_meta_raw as $meta ){
-		$allusers[$meta->user_id][$meta->meta_key] = $meta->meta_value;
-	}
+	$all_frats = $wpdb->get_results( $query );
 
-	/* now just the ones we want */
-	$allfrats = array();
-	foreach ( $allusers as $user ){
-		if ( true == is_rc($user) ) {
-			array_push($allfrats, $user);
-		}
-	}
-
-	return($allfrats);
+	return($all_frats);
 }
 function is_rc( $user ){
 	return isset( $user['ifcrush_role'] ) && ( $user['ifcrush_role'] == 'rc' );
@@ -160,9 +154,9 @@ global $wpdb;
 		echo "<tr><th>Letters</th><th>Fullname</th><th></th></tr>";
 
 		foreach ( $allfrats as $thisfrat ){
-			$letters = $thisfrat['ifcrush_frat_letters'];
-			$fullname = $thisfrat['ifcrush_frat_fullname'];
-			echo "<tr><td>$letters</td><td>$fullname</td><td>Add Report</td></tr>";
+			$letters = $thisfrat->ifcrush_frat_letters;
+			$fullname = $thisfrat->ifcrush_frat_fullname;
+			echo "<tr><td>$letters</td><td>$fullname</td><td></td></tr>";
 		}	
 		echo "</table></div>";
 	} else {
@@ -181,8 +175,8 @@ function ifcrush_list_frats_and_events(){
 		echo "<tr><th>Letters</th><th>Fullname</th><th></th></tr>";
 
 		foreach ( $allfrats as $thisfrat ){
-			$letters = $thisfrat['ifcrush_frat_letters'];
-			$fullname = $thisfrat['ifcrush_frat_fullname'];
+			$letters = $thisfrat->ifcrush_frat_letters;
+			$fullname = $thisfrat->ifcrush_frat_fullname;
 			echo "<tr><td>$letters</td><td>$fullname</td><td>Add Report</td></tr>";
 		}	
 		echo "</table>";
@@ -237,21 +231,23 @@ function create_frat_table_footer(){
 }
 
 function create_frat_table_row($thisfrat){
+	$letters = $thisfrat->ifcrush_frat_letters;
+	$fullname = $thisfrat->ifcrush_frat_fullname;
 	?>
 	<br>
 	<div class="ifcrushtablerow">
 			<div class="ifcrushtablecellnarrow">
 				<?php
-					echo $thisfrat['ifcrush_frat_fullname'] . " " . $thisfrat['ifcrush_frat_letters'];
+					echo $fullname;
 				?>
 			</div><!-- end fratid-->
 			<div class="ifcrushtablecellnarrow">
 				<?php
-					echo $thisfrat['first_name'] . " " . $thisfrat['last_name'];
+					echo $letters;
 				?>
 			</div><!-- end rushchair-->
 			<div class="ifcrushtableauto">
-				nothing for now
+				
 			</div><!-- end frataction-->
 	</div><!-- end ifcrushtablerow-->
 <?php
@@ -265,14 +261,13 @@ function create_rc_frat_menu( $current ){
 <?php
 	echo "<option value=\"none\">select fraternity</option>\n";
 
-	foreach ( $allfrat as $frat ) {
-		$frat_fullname = $frat['ifcrush_frat_fullname']; 
-		$frat_letters = $frat['ifcrush_frat_letters']; 
-
+	foreach ( $allfrat as $thisfrat ) {
+		$letters = $thisfrat->ifcrush_frat_letters;
+		$fullname = $thisfrat->ifcrush_frat_fullname;
 		if ( $frat_letters == $current ) {
-			echo "<option value=\"$frat_letters\" selected=\"selected\">$frat_fullname</option>\n";
+			echo "<option value=\"$letters\" selected=\"selected\">$fullname</option>\n";
 		} else {
-			echo "<option value=\"$frat_letters\">$frat_fullname</option>\n";
+			echo "<option value=\"$letters\">$fullname</option>\n";
 		}
 	}
 ?>

@@ -53,7 +53,7 @@ function ifcrush_display_events_by_frat_form( $frat_letters ){
 <?php
 }
 function ifcrush_report_handle_form() { 
-// 
+
 	global $debug;
 	if ( $debug ){
 			echo "<pre>"; print_r( $_POST ); echo "</pre>";
@@ -100,7 +100,7 @@ function ifcrush_create_frat_reports(){
 
 	if ( $allfrats ) {
 		foreach ( $allfrats as $thisfrat ){
-			$letters = $thisfrat['ifcrush_frat_letters'];
+			$letters = $thisfrat->ifcrush_frat_letters;
 			ifcrush_create_frat_report( $letters );
 		}
 	}
