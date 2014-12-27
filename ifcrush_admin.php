@@ -1,6 +1,7 @@
 <?php
-
+// Add the ifcrush admin menu.  
 function ifcrush_admin_menu() {
+	//add_management_page( $page_title, $menu_title, $capability, $menu_slug, $function );
 	add_management_page( "IFC Rush Tools", "IFC Rush Reports", 'manage_options', 'ifcrush_tool', 'ifcrush_admin_tools');
 }
 
@@ -16,6 +17,7 @@ function ifcrush_admin_tools() {
 	
 	// display a list of frats.  Then allow the admin to show the report for each.
 	ifcrush_list_frats();
+	
 	ifcrush_create_frat_reports();
 	echo '</div>';
 	echo '</div>';

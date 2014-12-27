@@ -58,11 +58,17 @@ function ifcrush_install(){
 register_activation_hook( __FILE__, 'ifcrush_install' );
 
 
-/** ifcrush_deactivate() - cleans up when the plugin is deactived, 
- ** delete database tables.  Careful of the order of deletion!
- ** KBL - I removed the table drop.  Usually we do not want to remove
- ** events and event registrations.  Admins can remove manually if needed.
- ** JBL - You and I need to find out more about updates.
+/** 
+ * ifcrush_deactivate() - cleans up when the plugin is deactived. 
+ * delete database tables.  Careful of the order of deletion!
+ * 
+ * There is a distinction here between deactivate and remove.  Our
+ * deactivate does not remove database files currently because we
+ * probably don't want to.
+ *
+ * KBL - I commented out the table drop.  Usually we do not want to remove
+ * events and event registrations.  Admins can remove manually if needed.
+ * JBL - You and I need to find out more about updates.
  **/
 function ifcrush_deactivate()
 {
@@ -87,16 +93,16 @@ function ifcrush_deactivate()
 register_deactivation_hook( __FILE__, 'ifcrush_deactivate');
 
 /**
- * Add stylesheet to the page
+ * Add stylesheets
  **/
 function safely_add_stylesheet() {
 	wp_enqueue_style( 'prefix-style', plugins_url('css/ifcrushstyle.css', __FILE__) );
 }
 add_action( 'wp_enqueue_scripts', 'safely_add_stylesheet' );
 
-/* supposedly the correct way to load jquery */
-add_action( 'wp_enqueue_scripts', 'load_jquery' );
-
+/**
+ * supposedly the correct way to load jquery 
+ **/
 function load_jquery() {
 	wp_enqueue_style( 'jquery-style', "http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" );
 	wp_enqueue_script( 'jquery' );
@@ -104,22 +110,26 @@ function load_jquery() {
 	wp_enqueue_script( 'jquery-ui-datepicker' );
 	wp_enqueue_script( 'jquery-ui-accordion' );
 }
+add_action( 'wp_enqueue_scripts', 'load_jquery' );
 
-/* supposedly the correct way to load jquery */
-add_action( 'wp_enqueue_scripts', 'load_ifcrush' );
+/**
+ * load_ifcrush() - this loads jquery for ifcrush form validation
+ **/
 function load_ifcrush(){
     wp_enqueue_script( 'ifcrush_script', plugins_url( 'js/formvalidate.js' , __FILE__ ), array(), null, true);
     wp_enqueue_script( 'ifcrush_script', plugins_url( 'js/reportsupport.js' , __FILE__ ), array(), null, true);
-
 }
+add_action( 'wp_enqueue_scripts', 'load_ifcrush' );
 
-add_action( 'admin_init', 'ifcrush_admin_init' );
+/**
+ * ifcrush_admin_init() - do initialization needed for ifcrush admin pages
+ **/
 function ifcrush_admin_init() {
-        /* Register our script. */
-		load_jquery();
-		wp_enqueue_script( 'ifcrush_script', plugins_url( 'js/reportsupport.js' , __FILE__ ), array(), null, true);
-
+    /* Register our script. */
+	load_jquery();
+	wp_enqueue_script( 'ifcrush_script', plugins_url( 'js/reportsupport.js' , __FILE__ ), array(), null, true);
 }
+add_action( 'admin_init', 'ifcrush_admin_init' );
 
 include 'ifcrush_event.php';
 include 'ifcrush_eventreg.php';

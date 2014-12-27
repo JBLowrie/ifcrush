@@ -15,7 +15,7 @@ function ifcrush_frat(){
 	if ( $debug ) echo "[ifcrush_frat] ";
 	
 	if ( false == is_user_logged_in() ) {
-		echo "sorry you must logged in as a fraternity to access this page.";
+		echo "sorry you must logged in as a recruitment chair to use this page.";
 		return;
 	}
 	
@@ -35,17 +35,17 @@ function ifcrush_frat(){
 
 	} else {	
 		/* List events and actions for this fraternity */
-		echo "Hello $frat_letters. Here are your events. <br>";
+		echo "Hello $frat_letters.";
 		ifcrush_display_request_report_form();
+		echo "<h2>Event Table for $frat_letters</h2>";
 		ifcrush_display_events( $frat_letters );
 	}
 }
 function ifcrush_frat_handle_forms( $action,$frat_letters ){
 	switch ( $action ) {
-		case "Create Report":
-		 	
+		case "View Reports":
 			ifcrush_display_done_form( "Return to Event List" );
-			echo "<h2>Report for $frat_letters</h2>";
+			echo "<h2>Reports for $frat_letters</h2>";
 			echo '<div id="accordion">';
 			ifcrush_create_frat_report( $frat_letters );
 			echo '</div>';
@@ -125,20 +125,11 @@ function ifcrush_display_done_form( $label ){
 <?php
 }
  
-function userInFrat( $thisfrat ){
-	if ( is_user_logged_in() ) {
-		$current_user = wp_get_current_user();
-		return true;
-	} else {
-		return false;
-	}
-}
-
 // this is just a button to request the report
 function ifcrush_display_request_report_form(){
 ?>
 <form method="post">
-	<input type="submit" name="action" value="Create Report"/>	
+	<input type="submit" name="action" value="View Reports"/>	
 </form>
 <?php
 }
