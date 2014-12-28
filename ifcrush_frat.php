@@ -34,17 +34,17 @@ function ifcrush_frat(){
 		ifcrush_frat_handle_forms( $_POST['action'], $frat_letters );
 
 	} else {	
-		/* List events and actions for this fraternity */
+		/* Create the options for a fraternity.*/
 		echo "Hello $frat_letters.";
-		ifcrush_display_request_report_form();
-		echo "<h2>Event Table for $frat_letters</h2>";
-		ifcrush_display_events( $frat_letters );
+		ifcrush_frat_show_options();
+		
 	}
 }
 function ifcrush_frat_handle_forms( $action,$frat_letters ){
 	switch ( $action ) {
 		case "View Reports":
-			ifcrush_display_done_form( "Return to Event List" );
+			ifcrush_frat_show_options();
+			//ifcrush_display_done_form( "Return to Event List" );
 			echo "<h2>Reports for $frat_letters</h2>";
 			echo '<div id="accordion">';
 			ifcrush_create_frat_report( $frat_letters );
@@ -83,6 +83,18 @@ function ifcrush_frat_handle_forms( $action,$frat_letters ){
 			ifcrush_display_register_pnm_at_event( $_POST['eventID'] );
 			break;
 			
+		case "View Event Table":
+			ifcrush_frat_show_options();
+			echo "<h2>Event Table for $frat_letters</h2>";
+			ifcrush_display_events( $frat_letters );
+			break;
+			
+		case "View Bid Offer Form":
+			ifcrush_frat_show_options();
+			echo "<h2>View Bid Offer Form for $frat_letters</h2>";
+			echo "<h2>Coming Soon!!!</h2>";
+			break;
+			
 		default:
 			echo "unknown action : $action<br>";
 	}
@@ -101,21 +113,32 @@ function get_all_frats(){
 	$query = "select 
 um1.meta_value as ifcrush_frat_letters, 
 um2.meta_value as ifcrush_frat_fullname
-from wp_usermeta as um1 
-left join wp_usermeta as um2 on um1.user_id = um2.user_id 
+from $table_name as um1 
+left join $table_name as um2 on um1.user_id = um2.user_id 
 where   
 um1.meta_key='ifcrush_frat_letters' AND 
 um2.meta_key='ifcrush_frat_fullname' AND 
-um1.user_id IN (SELECT user_id FROM wp_usermeta WHERE meta_key='ifcrush_role' and meta_value='rc')
+um1.user_id IN (SELECT user_id FROM $table_name WHERE meta_key='ifcrush_role' and meta_value='rc')
 order by ifcrush_frat_fullname";
 
 	$all_frats = $wpdb->get_results( $query );
 
 	return($all_frats);
 }
+
 function is_rc( $user ){
 	return isset( $user['ifcrush_role'] ) && ( $user['ifcrush_role'] == 'rc' );
 }
+
+function ifcrush_frat_show_options(){
+	echo "<br>";
+	ifcrush_display_request_report_form(); 
+	echo "<br>";
+	ifcrush_display_request_event_table_form();
+	echo "<br>";
+	ifcrush_display_offer_bid_form();
+}
+
 function ifcrush_display_done_form( $label ){
 ?>
 <br><form method="post">
@@ -133,6 +156,24 @@ function ifcrush_display_request_report_form(){
 </form>
 <?php
 }
+		
+// this is just a button to request the event table be displayed
+function ifcrush_display_request_event_table_form(){
+?>
+<form method="post">
+	<input type="submit" name="action" value="View Event Table"/>	
+</form>
+<?php
+}
+
+function ifcrush_display_offer_bid_form(){
+?>
+<form method="post">
+	<input type="submit" name="action" value="View Bid Offer Form"/>	
+</form>
+<?php
+}
+
 /* display frats in a list */
 function ifcrush_list_frats(){
 global $wpdb;	   
@@ -151,7 +192,7 @@ global $wpdb;
 		}	
 		echo "</table></div>";
 	} else {
-		?><div>No Frats!</div><?php
+		?><div>No Frats to list!</div><?php
 	}
 }
 
@@ -172,7 +213,7 @@ function ifcrush_list_frats_and_events(){
 		}	
 		echo "</table>";
 	} else {
-		?><h2>No Frats!</h2><?php
+		?><h2>No Frats to list events for!</h2><?php
 	}
 }
 
@@ -195,7 +236,7 @@ function ifcrush_display_frats(){
 		}	
 		create_frat_table_footer();
 	} else {
-		?><h2>No Frats!</h2><?php
+		?><h2>No Frats to display!</h2><?php
 	}
 }
 
