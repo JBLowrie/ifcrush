@@ -112,14 +112,14 @@ function get_all_pnm_ids_names(){
 um1.meta_value as ifcrush_netID, 
 um2.meta_value as last_name,
 um3.meta_value as first_name
-from wp_usermeta as um1 
-left join wp_usermeta as um2 on um1.user_id = um2.user_id 
-left join wp_usermeta as um3 on um1.user_id = um3.user_id 
+from $table_name as um1 
+left join $table_name as um2 on um1.user_id = um2.user_id 
+left join $table_name as um3 on um1.user_id = um3.user_id 
 where   
 um3.meta_key='first_name' AND 
 um2.meta_key='last_name' AND 
 um1.meta_key='ifcrush_netID' AND
-um1.user_id IN (SELECT user_id FROM wp_usermeta WHERE meta_key='ifcrush_role' and meta_value='pnm')
+um1.user_id IN (SELECT user_id FROM $table_name WHERE meta_key='ifcrush_role' and meta_value='pnm')
 order by ifcrush_netID";
 
 	$allpnms= $wpdb->get_results( $query );
