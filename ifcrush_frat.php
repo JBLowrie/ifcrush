@@ -41,9 +41,10 @@ function ifcrush_frat(){
 	}
 }
 function ifcrush_frat_handle_forms( $action,$frat_letters ){
+	ifcrush_frat_show_options();
+
 	switch ( $action ) {
 		case "View Reports":
-			ifcrush_frat_show_options();
 			//ifcrush_display_done_form( "Return to Event List" );
 			echo "<h2>Reports for $frat_letters</h2>";
 			echo '<div id="accordion">';
@@ -84,19 +85,21 @@ function ifcrush_frat_handle_forms( $action,$frat_letters ){
 			break;
 			
 		case "View Event Table":
-			ifcrush_frat_show_options();
 			echo "<h2>Event Table for $frat_letters</h2>";
 			ifcrush_display_events( $frat_letters );
 			break;
 			
 		case "View Bid Offer Form":
-			ifcrush_frat_show_options();
-			echo "<h2>View Bid Offer Form for $frat_letters</h2>";
-			echo "<h2>Coming Soon!!!</h2>";
+			ifcrush_bid_show_bid_form( $frat_letters );
+			break;
+			
+		case "Create Bid":
+			ifcrush_bid_handle_bid_form( $frat_letters );
 			break;
 			
 		default:
 			echo "unknown action : $action<br>";
+			//die();
 	}
 }
 /**

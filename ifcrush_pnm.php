@@ -102,7 +102,7 @@ function create_pnm_table_footer(){
 /**
  *  I want an array of arrays (or objects) where each element is a pmn with their name
  *  and netID.  I'd like to use a select so there is only one query.
- *  This funciton returns an array of objects.
+ *  This function returns an array of objects.
  **/
 function get_all_pnm_ids_names(){
 

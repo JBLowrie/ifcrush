@@ -36,7 +36,7 @@ function ifcrush_install(){
    dbDelta( $sql );
 
 	$table_name = $wpdb->prefix . "ifc_bid";    
-	$sql = 	"CREATE TABLE IF NOT EXISTS $table_name(
+	$sql = 	"CREATE TABLE IF NOT EXISTS $table_name (
 		bidstat int not null,	
 		netID varchar(6) not null,
 		fratID varchar(3) not null,
@@ -134,6 +134,7 @@ add_action( 'admin_init', 'ifcrush_admin_init' );
 include 'ifcrush_event.php';
 include 'ifcrush_eventreg.php';
 include 'ifcrush_reports.php';
+include 'ifcrush_bid.php';
 
 /**
  * These are the functions to wire in the shortcodes
