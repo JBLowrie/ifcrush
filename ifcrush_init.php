@@ -37,10 +37,9 @@ function ifcrush_install(){
 
 	$table_name = $wpdb->prefix . "ifc_bid";    
 	$sql = 	"CREATE TABLE IF NOT EXISTS $table_name (
-		bidstat int not null,	
 		netID varchar(6) not null,
 		fratID varchar(3) not null,
-		PRIMARY KEY  (netID, fratID)
+		PRIMARY KEY  (netID)
 	) engine = InnoDB;";
    dbDelta( $sql );
 
