@@ -10,7 +10,7 @@ function ifcrush_bid_show_bid_form( $frat_letters ) {
  			 * to any of your events, but those who have are 
  			 * easier to find
  			 */  
- 			create_pnm_netIDs_menu("     "); 
+ 			create_available_pnm_netIDs_menu("     "); 
  		?> 
  		<input type="submit" name="action"  value="Create Bid" />
 	</form>
@@ -21,7 +21,7 @@ function ifcrush_bid_show_bid_form( $frat_letters ) {
 function ifcrush_bid_handle_bid_form( $frat_letters ){
 ?>
 <?php
-		$pnm_netID = $_POST['pnm_netID'];
+		$pnm_netID = $_POST['available_pnm_netID'];
 		$pnm_name = get_pnm_name_by_netID( $pnm_netID );
 
 		echo "<h3>$frat_letters offering a bid to $pnm_name</h3>";

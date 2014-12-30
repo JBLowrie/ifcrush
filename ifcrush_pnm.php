@@ -104,27 +104,29 @@ function create_pnm_table_footer(){
  *  and netID.  I'd like to use a select so there is only one query.
  *  This function returns an array of objects.
  **/
-function get_all_pnm_ids_names(){
+function get_available_pnm_ids_names(){
 
 	global $wpdb;		
-	$table_name = $wpdb->prefix . "usermeta";
-	$query = "select um1.user_id, 
-um1.meta_value as ifcrush_netID, 
-um2.meta_value as last_name,
-um3.meta_value as first_name
-from $table_name as um1 
-left join $table_name as um2 on um1.user_id = um2.user_id 
-left join $table_name as um3 on um1.user_id = um3.user_id 
-where   
-um3.meta_key='first_name' AND 
-um2.meta_key='last_name' AND 
-um1.meta_key='ifcrush_netID' AND
-um1.user_id IN (SELECT user_id FROM $table_name WHERE meta_key='ifcrush_role' and meta_value='pnm')
-order by ifcrush_netID";
+	$usermeta_table = $wpdb->prefix . "usermeta";
+	$ifc_bid_table = $wpdb->prefix . "ifc_bid";
+	$query = "select * from (select um1.user_id, 
+				um1.meta_value as ifcrush_netID, 
+				um2.meta_value as last_name,
+				um3.meta_value as first_name
+			from $usermeta_table as um1 
+			left join $usermeta_table as um2 on um1.user_id = um2.user_id 
+			left join $usermeta_table as um3 on um1.user_id = um3.user_id 
+			WHERE um3.meta_key='first_name' AND 
+					um2.meta_key='last_name' AND 
+					um1.meta_key='ifcrush_netID' AND
+					um1.user_id IN (SELECT user_id FROM $usermeta_table 
+									WHERE meta_key='ifcrush_role' AND meta_value='pnm'))
+			AS newmem 
+			WHERE newmem.ifcrush_netID NOT IN (SELECT netID from $ifc_bid_table)";
 
-	$allpnms= $wpdb->get_results( $query );
+	$availablepnms= $wpdb->get_results( $query );
 	
-	return( $allpnms );
+	return( $availablepnms );
 }
 function is_pnm( $user ){
 	return isset( $user['ifcrush_role'] ) && ( $user['ifcrush_role'] == 'pnm' );
@@ -182,4 +184,71 @@ function get_pnm_name_by_netID( $netID ){
 	}	
 	return $full_name;
 }
+
+
+function create_available_pnm_netIDs_menu( $current ){
+
+	$allpnms = get_available_pnm_ids_names();
+	
+	global $debug;
+	if ($debug) {
+		echo "<pre>";
+		print_r($allpnms);
+		echo "</pre>";
+	}
+	
+?>
+	<select name="available_pnm_netID">
+<?php
+	echo "<option value=\"none\">enter NetID</option>\n";
+
+	foreach ( $allpnms as $pnm ) {
+		$pnm_netID = $pnm->ifcrush_netID; 
+		$last_name = $pnm->last_name; 
+		$first_name = $pnm->first_name; 
+		$name = $first_name . " " . $last_name;
+		$displayoption = $pnm_netID ." - ".$name;
+		
+		if ( $pnm_netID == $current ) {
+			echo "<option value=\"$pnm_netID\" selected=\"selected\">$displayoption</option>\n";
+		} else {
+			echo "<option value=\"$pnm_netID\">$displayoption</option>\n";
+		}
+	}
+?>
+	</select>
+<?php
+}
+
+
+
+/**
+ *  I want an array of arrays (or objects) where each element is a pmn with their name
+ *  and netID.  I'd like to use a select so there is only one query.
+ *  This function returns an array of objects.
+ **/
+function get_all_pnm_ids_names(){
+
+	global $wpdb;		
+	$table_name = $wpdb->prefix . "usermeta";
+	$query = "select um1.user_id, 
+um1.meta_value as ifcrush_netID, 
+um2.meta_value as last_name,
+um3.meta_value as first_name
+from $table_name as um1 
+left join $table_name as um2 on um1.user_id = um2.user_id 
+left join $table_name as um3 on um1.user_id = um3.user_id 
+where   
+um3.meta_key='first_name' AND 
+um2.meta_key='last_name' AND 
+um1.meta_key='ifcrush_netID' AND
+um1.user_id IN (SELECT user_id FROM $table_name WHERE meta_key='ifcrush_role' and meta_value='pnm')
+order by ifcrush_netID";
+
+	$allpnms= $wpdb->get_results( $query );
+	
+	return( $allpnms );
+}
+
+
 ?>
