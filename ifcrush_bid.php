@@ -20,8 +20,11 @@ function ifcrush_bid_show_bid_form( $frat_letters ) {
 
 function ifcrush_bid_handle_bid_form( $frat_letters ){
 ?>
-			<h2>Not implemented yet!  :( </h2>
 <?php
+		$pnm_netID = $_POST['pnm_netID'];
+		$pnm_name = get_pnm_name_by_netID( $pnm_netID );
+
+		echo "<h3>$frat_letters offering a bid to $pnm_name</h3>";
 	/* 
 	 * verify PNM bid status - 
 	 *		is unavailable if they have accepted another bid
