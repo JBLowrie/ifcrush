@@ -21,10 +21,24 @@ function ifcrush_bid_show_bid_form( $frat_letters ) {
 function ifcrush_bid_handle_bid_form( $frat_letters ){
 ?>
 <?php
+		global $wpdb;
+	
 		$pnm_netID = $_POST['available_pnm_netID'];
 		$pnm_name = get_pnm_name_by_netID( $pnm_netID );
-
 		echo "<h3>$frat_letters offering a bid to $pnm_name</h3>";
+		
+		$table_name = $wpdb->prefix . "ifcrush_bid";
+		$thisBid = array(
+						'netID' => $pnm_netID,
+						'fratID' => $frat_letters
+					);
+		$rows_affected = $wpdb->insert($table_name, $thisBid);
+		
+		if ( 0 == $rows_affected ) {
+				echo "bid entry failed for " . $thisBid['pnm_netID'];
+			}
+				
+		return $rows_affected;
 	/* 
 	 * verify PNM bid status - 
 	 *		is unavailable if they have accepted another bid
