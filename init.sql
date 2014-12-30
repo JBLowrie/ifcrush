@@ -38,7 +38,6 @@ CREATE TABLE EVENT(
 ) engine = InnoDB;
 
 CREATE TABLE BID(
-	bidstat int not null,
 	RusheeID		varchar(6) not null,
 	fratID varchar(3) not null,
 	FOREIGN KEY (RusheeID) references RUSHEE(netID),
