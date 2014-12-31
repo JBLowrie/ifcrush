@@ -96,7 +96,7 @@ function ifcrush_display_frat_events( $frat ) {
 	}
 } 
 function ifcrush_create_frat_reports(){
-	$allfrats = get_all_frats();
+	$allfrats = if_crush_get_all_frats();
 
 	if ( $allfrats ) {
 		foreach ( $allfrats as $thisfrat ){
@@ -183,14 +183,19 @@ function ifcrush_create_frat_report_pnms_event_count( $frat_letters ){
 /** creates html for a selection menu for frats
  **/
 function ifcrush_create_frat_menu( $current ){
-	$frats = get_all_frats();
+	$frats = ifcrush_get_all_frats();
+
+	if ( !$frats ) {
+		echo "<h3>No Frats!?!</h3>";
+		return;
+	}
 ?>
 	<select name="letters">
+		<option value="none">select fraternity</option>
 <?php
-	echo "<option value=\"none\">select fraternity</option>\n";
 	foreach ( $frats as $frat ) {
-		$ifcrush_frat_letters = $frat['ifcrush_frat_letters'];
-		$ifcrush_frat_fullname = $frat['ifcrush_frat_fullname'];
+		$ifcrush_frat_letters = $frat->ifcrush_frat_letters;
+		$ifcrush_frat_fullname = $frat->ifcrush_frat_fullname;
 		if ( $ifcrush_frat_letters == $current ) {
 			echo "<option value=\"$ifcrush_frat_letters\" selected=\"selected\">$ifcrush_frat_fullname</option>\n";
 		} else {

@@ -102,6 +102,7 @@ function ifcrush_frat_handle_forms( $action,$frat_letters ){
 			//die();
 	}
 }
+
 /**
  *  I want an array of arrays (or objects) where each element is a pmn with their name
  *  and netID.  I'd like to use a select so there is only one query.
@@ -109,7 +110,7 @@ function ifcrush_frat_handle_forms( $action,$frat_letters ){
  *  and create one array element for each user with meta data.
  *  Then I copy just the users I want into another array. 
   **/
-function get_all_frats(){
+function ifcrush_get_all_frats(){
 
 	global $wpdb;		
 	$table_name = $wpdb->prefix . "usermeta";
@@ -180,7 +181,7 @@ function ifcrush_display_offer_bid_form(){
 /* display frats in a list */
 function ifcrush_list_frats(){
 global $wpdb;	   
-	$allfrats = get_all_frats();
+	$allfrats = ifcrush_get_all_frats();
 
 	echo "<h3>List of Fraternities</h3>";
 	if ( $allfrats ) {
@@ -201,7 +202,7 @@ global $wpdb;
 
 function ifcrush_list_frats_and_events(){
 	global $wpdb;	   
-	$allfrats = get_all_frats();
+	$allfrats = ifcrush_get_all_frats();
 
 	if ( $allfrats ) {
 		echo "<h3>Fraternities and Events</h3>";
@@ -230,7 +231,7 @@ function ifcrush_display_frats(){
 // 	}
 	
 	global $wpdb;	   
-	$allfrats = get_all_frats();
+	$allfrats = ifcrush_get_all_frats();
 
 	if ( $allfrats ) {
 		create_frat_table_header();
@@ -290,12 +291,11 @@ function create_frat_table_row($thisfrat){
 
 /** just keeping this around **/
 function create_rc_frat_menu( $current ){
-	$allfrats = get_all_frats();
+	$allfrats = ifcrush_get_all_frats();
 ?>
 	<select name="fratID">
+	<option value="none">select fraternity</option>
 <?php
-	echo "<option value=\"none\">select fraternity</option>\n";
-
 	foreach ( $allfrat as $thisfrat ) {
 		$letters = $thisfrat->ifcrush_frat_letters;
 		$fullname = $thisfrat->ifcrush_frat_fullname;

@@ -99,35 +99,6 @@ function create_pnm_table_footer(){
 	</div><!-- end pnm table-->  
 <?php
 }
-/**
- *  I want an array of arrays (or objects) where each element is a pmn with their name
- *  and netID.  I'd like to use a select so there is only one query.
- *  This function returns an array of objects.
- **/
-function get_available_pnm_ids_names(){
-
-	global $wpdb;		
-	$usermeta_table = $wpdb->prefix . "usermeta";
-	$ifc_bid_table = $wpdb->prefix . "ifc_bid";
-	$query = "select * from (select um1.user_id, 
-				um1.meta_value as ifcrush_netID, 
-				um2.meta_value as last_name,
-				um3.meta_value as first_name
-			from $usermeta_table as um1 
-			left join $usermeta_table as um2 on um1.user_id = um2.user_id 
-			left join $usermeta_table as um3 on um1.user_id = um3.user_id 
-			WHERE um3.meta_key='first_name' AND 
-					um2.meta_key='last_name' AND 
-					um1.meta_key='ifcrush_netID' AND
-					um1.user_id IN (SELECT user_id FROM $usermeta_table 
-									WHERE meta_key='ifcrush_role' AND meta_value='pnm'))
-			AS newmem 
-			WHERE newmem.ifcrush_netID NOT IN (SELECT netID from $ifc_bid_table)";
-
-	$availablepnms= $wpdb->get_results( $query );
-	
-	return( $availablepnms );
-}
 function is_pnm( $user ){
 	return isset( $user['ifcrush_role'] ) && ( $user['ifcrush_role'] == 'pnm' );
 }
@@ -188,8 +159,12 @@ function get_pnm_name_by_netID( $netID ){
 
 function create_available_pnm_netIDs_menu( $current ){
 
-	$allpnms = get_available_pnm_ids_names();
+	$availablepnms = get_available_pnm_ids_names();
 	
+	if (!$availablepnms) {
+		echo "<h3>No PNMS!?!</h3>";
+		return;
+	}
 	global $debug;
 	if ($debug) {
 		echo "<pre>";
@@ -202,7 +177,7 @@ function create_available_pnm_netIDs_menu( $current ){
 <?php
 	echo "<option value=\"none\">enter NetID</option>\n";
 
-	foreach ( $allpnms as $pnm ) {
+	foreach ( $availablepnms as $pnm ) {
 		$pnm_netID = $pnm->ifcrush_netID; 
 		$last_name = $pnm->last_name; 
 		$first_name = $pnm->first_name; 
@@ -221,6 +196,35 @@ function create_available_pnm_netIDs_menu( $current ){
 }
 
 
+/**
+ *  function get_available_pnm_ids_names() - returns an array of objects where 
+ *  each element is a pmn with their name and netID.  I'd like to use a select 
+ *  so there is only one query.
+ **/
+function get_available_pnm_ids_names(){
+
+	global $wpdb;		
+	$usermeta_table = $wpdb->prefix . "usermeta";
+	$ifc_bid_table = $wpdb->prefix . "ifc_bid";
+	$query = "select * from (select um1.user_id, 
+				um1.meta_value as ifcrush_netID, 
+				um2.meta_value as last_name,
+				um3.meta_value as first_name
+			from $usermeta_table as um1 
+			left join $usermeta_table as um2 on um1.user_id = um2.user_id 
+			left join $usermeta_table as um3 on um1.user_id = um3.user_id 
+			WHERE um3.meta_key='first_name' AND 
+					um2.meta_key='last_name' AND 
+					um1.meta_key='ifcrush_netID' AND
+					um1.user_id IN (SELECT user_id FROM $usermeta_table 
+									WHERE meta_key='ifcrush_role' AND meta_value='pnm'))
+			AS newmem 
+			WHERE newmem.ifcrush_netID NOT IN (SELECT netID from $ifc_bid_table)";
+
+	$availablepnms= $wpdb->get_results( $query );
+	
+	return( $availablepnms );
+}
 
 /**
  *  I want an array of arrays (or objects) where each element is a pmn with their name
