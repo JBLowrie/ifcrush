@@ -135,12 +135,13 @@ function is_rc( $user ){
 }
 
 function ifcrush_frat_show_options(){
-	echo "<br>";
-	ifcrush_display_request_report_form(); 
-	echo "<br>";
-	ifcrush_display_request_event_table_form();
-	echo "<br>";
-	ifcrush_display_offer_bid_form();
+?>
+<form method="post">
+	<input type="submit" name="action" value="View Reports"/>	
+	<input type="submit" name="action" value="View Event Table"/>	
+	<input type="submit" name="action" value="View Bid Offer Form"/>	
+</form>
+<?php
 }
 
 function ifcrush_display_done_form( $label ){
@@ -152,32 +153,6 @@ function ifcrush_display_done_form( $label ){
 <?php
 }
  
-// this is just a button to request the report
-function ifcrush_display_request_report_form(){
-?>
-<form method="post">
-	<input type="submit" name="action" value="View Reports"/>	
-</form>
-<?php
-}
-		
-// this is just a button to request the event table be displayed
-function ifcrush_display_request_event_table_form(){
-?>
-<form method="post">
-	<input type="submit" name="action" value="View Event Table"/>	
-</form>
-<?php
-}
-
-function ifcrush_display_offer_bid_form(){
-?>
-<form method="post">
-	<input type="submit" name="action" value="View Bid Offer Form"/>	
-</form>
-<?php
-}
-
 /* display frats in a list */
 function ifcrush_list_frats(){
 global $wpdb;	   

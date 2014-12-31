@@ -1,18 +1,15 @@
 <?php
+/**
+ * ifcrush_bid_show_bid_form - displays the form with
+ * the netid selection and confirmation password for pnm
+ */
 function ifcrush_bid_show_bid_form( $frat_letters ) {
 ?>
 	<hr>
  	<form method="post">
- 		<?php
- 			/* --kbltodo  maybe a new create_available_pnms( $frat_letters )
- 			 * with counts of the number of events attended.
- 			 * then you can still select someone who hasn't been
- 			 * to any of your events, but those who have are 
- 			 * easier to find. 
- 			 */  
- 			create_available_pnm_netIDs_menu("     ");
- 			?>  			
- 			PNM Password: <input type="password" name="pnm_pw"/> 		
+ 		<?php  create_available_pnm_netIDs_menu("     "); ?> 
+ 		<br> 			
+ 		PNM Password: <input type="password" name="pnm_pw"/> 		
  		<input type="submit" name="action"  value="Create Bid" />
 	</form>
 	<hr>
@@ -43,19 +40,21 @@ function ifcrush_bid_handle_bid_form( $frat_letters ){
 		global $wpdb;
 	
 		$pnm_netID = $_POST['available_pnm_netID'];
-		if ( $pnm_netID == "none" )
+		if ( $pnm_netID == "none" ) {
 			echo "<p>Please select a PNM</p>";
+			return;
+		}
 		$pnm_pw = $_POST['pnm_pw'];
 		$pnm_name = get_pnm_name_by_netID( $pnm_netID );
-		echo "<h3>$frat_letters offering a bid to $pnm_name</h3>";
 		
 		$failure = false;
 		if ( -1 == ifcrush_bid_verify_password( $pnm_netID, $pnm_pw) ) {
 			$failure = true;
-			echo "<p>PNM Password Failed</p>";
+			echo "<p>PNM Password Failed - please try again.</p>";
 		}
 		
 		if ( ! $failure ) {
+			echo "<h2>$frat_letters offering a bid to $pnm_name</h2>";
 			$thisBid = array(  'netID' => $pnm_netID, 'fratID' => $frat_letters );
 			ifcrush_bid_insert_bid($thisBid);		       
 		}
@@ -70,11 +69,10 @@ function ifcrush_bid_insert_bid($thisBid){
 		$rows_affected = $wpdb->insert($table_name, $thisBid);
 		
 		if ( 0 == $rows_affected ) {
-			echo "bid entry failed for " . $thisBid['netID'] . " - " . $thisBid['fratID'];
+			echo "Bid entry failed for " . $thisBid['netID'] . 
+				 " offered by " . $thisBid['fratID'];
 		} else {
 			echo "Success! " . $thisBid['netID'] . " - " . $thisBid['fratID'];
 
 		}
-				
-		return $rows_affected;
 }
