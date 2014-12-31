@@ -206,20 +206,23 @@ function get_available_pnm_ids_names(){
 	global $wpdb;		
 	$usermeta_table = $wpdb->prefix . "usermeta";
 	$ifc_bid_table = $wpdb->prefix . "ifc_bid";
-	$query = "select * from (select um1.user_id, 
-				um1.meta_value as ifcrush_netID, 
-				um2.meta_value as last_name,
-				um3.meta_value as first_name
-			from $usermeta_table as um1 
-			left join $usermeta_table as um2 on um1.user_id = um2.user_id 
-			left join $usermeta_table as um3 on um1.user_id = um3.user_id 
-			WHERE um3.meta_key='first_name' AND 
-					um2.meta_key='last_name' AND 
-					um1.meta_key='ifcrush_netID' AND
-					um1.user_id IN (SELECT user_id FROM $usermeta_table 
-									WHERE meta_key='ifcrush_role' AND meta_value='pnm'))
-			AS newmem 
-			WHERE newmem.ifcrush_netID NOT IN (SELECT netID from $ifc_bid_table)";
+	
+	$query = "
+		select * from 
+		(select um1.user_id, 
+			um1.meta_value as ifcrush_netID, 
+			um2.meta_value as last_name, 
+			um3.meta_value as first_name from $usermeta_table as um1 
+				left join $usermeta_table as um2 on um1.user_id = um2.user_id 
+				left join $usermeta_table as um3 on um1.user_id = um3.user_id 
+					WHERE ( um3.meta_key LIKE 'first_name' 
+						AND um2.meta_key LIKE 'last_name' 
+						AND um1.meta_key LIKE 'ifcrush_netID' )
+						AND um1.user_id IN 
+						(SELECT user_id FROM $usermeta_table 
+							WHERE meta_key LIKE 'ifcrush_role' 
+								AND meta_value LIKE 'pnm')) as p
+			WHERE ifcrush_netID NOT IN (SELECT netID from $ifc_bid_table)";
 
 	$availablepnms= $wpdb->get_results( $query );
 	
@@ -234,20 +237,20 @@ function get_available_pnm_ids_names(){
 function get_all_pnm_ids_names(){
 
 	global $wpdb;		
-	$table_name = $wpdb->prefix . "usermeta";
+	$usermeta_name = $wpdb->prefix . "usermeta";
 	$query = "select um1.user_id, 
-um1.meta_value as ifcrush_netID, 
-um2.meta_value as last_name,
-um3.meta_value as first_name
-from $table_name as um1 
-left join $table_name as um2 on um1.user_id = um2.user_id 
-left join $table_name as um3 on um1.user_id = um3.user_id 
-where   
-um3.meta_key='first_name' AND 
-um2.meta_key='last_name' AND 
-um1.meta_key='ifcrush_netID' AND
-um1.user_id IN (SELECT user_id FROM $table_name WHERE meta_key='ifcrush_role' and meta_value='pnm')
-order by ifcrush_netID";
+		um1.meta_value as ifcrush_netID, 
+		um2.meta_value as last_name, 
+		um3.meta_value as first_name from $usermeta_name as um1 
+				left join $usermeta_name as um2 on um1.user_id = um2.user_id 
+				left join $usermeta_name as um3 on um1.user_id = um3.user_id 
+					WHERE ( um3.meta_key LIKE 'first_name' 
+						AND um2.meta_key LIKE 'last_name' 
+						AND um1.meta_key LIKE 'ifcrush_netID' )
+						AND um1.user_id IN 
+						(SELECT user_id FROM $usermeta_name 
+							WHERE meta_key LIKE 'ifcrush_role' 
+								AND meta_value LIKE 'pnm')";
 
 	$allpnms= $wpdb->get_results( $query );
 	

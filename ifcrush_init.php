@@ -33,7 +33,7 @@ function ifcrush_install(){
 		fratID varchar(3) not null,
 		PRIMARY KEY  (eventID)
 	) engine = InnoDB;";
-   dbDelta( $sql );
+    dbDelta( $sql );
 
 	$table_name = $wpdb->prefix . "ifc_bid";    
 	$sql = 	"CREATE TABLE IF NOT EXISTS $table_name (
@@ -41,7 +41,7 @@ function ifcrush_install(){
 		fratID varchar(3) not null,
 		PRIMARY KEY  (netID)
 	) engine = InnoDB;";
-   dbDelta( $sql );
+    dbDelta( $sql );
 
 	$table_name = $wpdb->prefix . "ifc_eventreg";    
 	$sql = 	"CREATE TABLE IF NOT EXISTS $table_name (
@@ -51,7 +51,7 @@ function ifcrush_install(){
 		FOREIGN KEY  (eventID) references $event_table_name(eventID)
 	) engine = InnoDB;";
    	dbDelta( $sql );
-   
+   	   
    add_option( "ifcrush_db_version", $ifcrush_db_version );
 }
 register_activation_hook( __FILE__, 'ifcrush_install' );
