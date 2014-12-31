@@ -96,7 +96,7 @@ function ifcrush_display_frat_events( $frat ) {
 	}
 } 
 function ifcrush_create_frat_reports(){
-	$allfrats = if_crush_get_all_frats();
+	$allfrats = ifcrush_get_all_frats();
 
 	if ( $allfrats ) {
 		foreach ( $allfrats as $thisfrat ){
