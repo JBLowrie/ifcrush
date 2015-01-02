@@ -38,7 +38,7 @@ function ifcrush_pnm(){
  
 /* display pnms in a list */
 function ifcrush_list_pnms(){   
-	$allpnms = get_all_pnm_ids_names_bids();
+	$allpnms = get_all_pnm_ids_names();
 
 	echo "<h3>List of Potential New Members</h3>";
 	if ( $allpnms ) {
@@ -236,19 +236,21 @@ function get_available_pnm_ids_names(){
  **/
 function get_all_pnm_ids_names(){
 
-	global $wpdb;		
+	global $wpdb;	
+	$usermeta_table = $wpdb->prefix . "usermeta";
+	
 
 	$query = "select um1.user_id, 
 		um1.meta_value as ifcrush_netID, 
 		um2.meta_value as last_name, 
-		um3.meta_value as first_name from $usermeta as um1 
-				left join $usermeta as um2 on um1.user_id = um2.user_id 
-				left join $usermeta as um3 on um1.user_id = um3.user_id 
+		um3.meta_value as first_name from $usermeta_table as um1 
+				left join $usermeta_table as um2 on um1.user_id = um2.user_id 
+				left join $usermeta_table as um3 on um1.user_id = um3.user_id 
 					WHERE ( um3.meta_key LIKE 'first_name' 
 						AND um2.meta_key LIKE 'last_name' 
 						AND um1.meta_key LIKE 'ifcrush_netID' )
 						AND um1.user_id IN 
-						(SELECT user_id FROM $usermeta 
+						(SELECT user_id FROM $usermeta_table 
 							WHERE meta_key LIKE 'ifcrush_role' 
 								AND meta_value LIKE 'pnm')";
 

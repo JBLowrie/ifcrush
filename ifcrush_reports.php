@@ -113,8 +113,9 @@ function ifcrush_create_frat_report( $frat_letters ) {
 
 	$no_event_data = ! ifcrush_create_frat_report_pnms_event_title( $frat_letters );
 	$no_count_data = ! ifcrush_create_frat_report_pnms_event_count( $frat_letters );
+	$no_bid_data   = ! ifcrush_create_frat_report_pnms_bid_count  ( $frat_letters );
 
-	if ( $no_event_data && $no_count_data ) {
+	if ( $no_event_data && $no_count_data && $no_bid_data) {
 		echo "<h3>No report data for $frat_letters</h3><div></div>";
 	}
 } 
@@ -170,6 +171,32 @@ function ifcrush_create_frat_report_pnms_event_count( $frat_letters ){
 		foreach ( $allresults as $r ){
 			echo "<tr><td>$r->pnm_netID</td><td>" . get_pnm_name_by_netID($r->pnm_netID) .
 							"</td><td>$r->num_events</td></tr>"; 
+		}
+		echo "</table>
+		      </div>
+		      ";
+		return true;
+	} 
+	return false;
+}
+
+function ifcrush_create_frat_report_pnms_bid_count( $frat_letters ){
+
+	global $wpdb;
+
+	$bid_table_name 	= $wpdb->prefix . "ifc_bid";
+
+	$query = "SELECT netID from $bid_table_name where fratID='$frat_letters'";
+		
+	$allresults = $wpdb->get_results($query);
+	
+	if ( $allresults ) {
+		echo "<h3>BID Report for $frat_letters</h3>
+		      <div>";
+		echo "<table><tr><th>Net ID</th><th>Name</th><th></th></tr>";
+		foreach ( $allresults as $r ){
+			echo "<tr><td>$r->netID</td><td>" . get_pnm_name_by_netID($r->netID) .
+							"</td><td></td></tr>"; 
 		}
 		echo "</table>
 		      </div>
