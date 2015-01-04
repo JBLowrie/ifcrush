@@ -8,7 +8,7 @@ function ifcrush_bid_show_bid_form( $frat_letters ) {
 	<hr>
  	<form method="post">
  		<?php  create_available_pnm_netIDs_menu("     "); ?> 
- 		<br> 			
+ 		<br> <br>			
  		PNM Password: <input type="password" name="pnm_pw"/> 		
  		<input type="submit" name="action"  value="Create Bid" />
 	</form>

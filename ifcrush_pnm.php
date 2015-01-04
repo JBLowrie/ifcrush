@@ -175,14 +175,14 @@ function create_available_pnm_netIDs_menu( $current ){
 ?>
 	<select name="available_pnm_netID">
 <?php
-	echo "<option value=\"none\">enter NetID</option>\n";
+	echo "<option value=\"none\">enter name</option>\n";
 
 	foreach ( $availablepnms as $pnm ) {
 		$pnm_netID = $pnm->ifcrush_netID; 
 		$last_name = $pnm->last_name; 
 		$first_name = $pnm->first_name; 
 		$name = $first_name . " " . $last_name;
-		$displayoption = $pnm_netID ." - ".$name;
+		$displayoption = $name." - ". $pnm_netID ;
 		
 		if ( $pnm_netID == $current ) {
 			echo "<option value=\"$pnm_netID\" selected=\"selected\">$displayoption</option>\n";
@@ -241,9 +241,10 @@ function get_all_pnm_ids_names(){
 	
 
 	$query = "select um1.user_id, 
-		um1.meta_value as ifcrush_netID, 
+		um3.meta_value as first_name,
 		um2.meta_value as last_name, 
-		um3.meta_value as first_name from $usermeta_table as um1 
+		um1.meta_value as ifcrush_netID 
+		 from $usermeta_table as um1 
 				left join $usermeta_table as um2 on um1.user_id = um2.user_id 
 				left join $usermeta_table as um3 on um1.user_id = um3.user_id 
 					WHERE ( um3.meta_key LIKE 'first_name' 
@@ -252,7 +253,8 @@ function get_all_pnm_ids_names(){
 						AND um1.user_id IN 
 						(SELECT user_id FROM $usermeta_table 
 							WHERE meta_key LIKE 'ifcrush_role' 
-								AND meta_value LIKE 'pnm')";
+								AND meta_value LIKE 'pnm') 
+								order by first_name, last_name";
 
 	$allpnms= $wpdb->get_results( $query );
 	

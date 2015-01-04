@@ -159,14 +159,14 @@ function create_pnm_netIDs_menu( $current ){
 ?>
 	<select name="pnm_netID">
 <?php
-	echo "<option value=\"none\">enter NetID</option>\n";
+	echo "<option value=\"none\">enter name</option>\n";
 
 	foreach ( $allpnms as $pnm ) {
 		$pnm_netID = $pnm->ifcrush_netID; 
 		$last_name = $pnm->last_name; 
 		$first_name = $pnm->first_name; 
 		$name = $first_name . " " . $last_name;
-		$displayoption = $pnm_netID ." - ".$name;
+		$displayoption = $name." - ". $pnm_netID ;
 		
 		if ( $pnm_netID == $current ) {
 			echo "<option value=\"$pnm_netID\" selected=\"selected\">$displayoption</option>\n";
