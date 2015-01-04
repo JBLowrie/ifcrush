@@ -210,9 +210,9 @@ function get_available_pnm_ids_names(){
 	$query = "
 		select * from 
 		(select um1.user_id, 
-			um1.meta_value as ifcrush_netID, 
+			um3.meta_value as first_name,
 			um2.meta_value as last_name, 
-			um3.meta_value as first_name from $usermeta_table as um1 
+			um1.meta_value as ifcrush_netID  from $usermeta_table as um1 
 				left join $usermeta_table as um2 on um1.user_id = um2.user_id 
 				left join $usermeta_table as um3 on um1.user_id = um3.user_id 
 					WHERE ( um3.meta_key LIKE 'first_name' 
@@ -222,7 +222,8 @@ function get_available_pnm_ids_names(){
 						(SELECT user_id FROM $usermeta_table 
 							WHERE meta_key LIKE 'ifcrush_role' 
 								AND meta_value LIKE 'pnm')) as p
-			WHERE ifcrush_netID NOT IN (SELECT netID from $ifc_bid_table)";
+			WHERE ifcrush_netID NOT IN (SELECT netID from $ifc_bid_table)
+			order by first_name, last_name";
 
 	$availablepnms= $wpdb->get_results( $query );
 	
