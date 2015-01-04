@@ -3,6 +3,20 @@
 function ifcrush_admin_menu() {
 	//add_management_page( $page_title, $menu_title, $capability, $menu_slug, $function );
 	add_management_page( "IFC Rush Tools", "IFC Rush Reports", 'manage_options', 'ifcrush_tool', 'ifcrush_admin_tools');
+	add_management_page( "IFC Rush Tools 2", "IFC Rush Bid Reports", 'manage_options', 'ifcrush_bid', 'ifcrush_bid_data');
+}
+
+function ifcrush_bid_data(){
+	if ( !current_user_can( 'manage_options' ) )  {
+		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+	}
+	echo '<div class="wrap">';
+	echo '<div id="accordion">';
+	echo "<h3>Bid Data</h3>";
+
+		echo "<div>So here is more info</div>";
+	echo '</div>';
+	echo '</div>';
 }
 
 function ifcrush_admin_tools() {
@@ -13,7 +27,7 @@ function ifcrush_admin_tools() {
 	echo '<div id="accordion">';
 
 	// display a list of pnms
-	//ifcrush_list_pnms();
+	ifcrush_list_pnms();
 	
 	// display a list of frats.  Then allow the admin to show the report for each.
 	ifcrush_list_frats();

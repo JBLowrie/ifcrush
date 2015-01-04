@@ -111,8 +111,8 @@ function ifcrush_create_frat_reports(){
  **/ 
 function ifcrush_create_frat_report( $frat_letters ) {	
 
-	//$no_event_data = ! ifcrush_create_frat_report_pnms_event_title( $frat_letters );
-	//$no_count_data = ! ifcrush_create_frat_report_pnms_event_count( $frat_letters );
+	$no_event_data = ! ifcrush_create_frat_report_pnms_event_title( $frat_letters );
+	$no_count_data = ! ifcrush_create_frat_report_pnms_event_count( $frat_letters );
 	$no_bid_data   = ! ifcrush_create_frat_report_pnms_bid_count  ( $frat_letters );
 	
 
