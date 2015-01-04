@@ -72,7 +72,86 @@ function ifcrush_bid_insert_bid($thisBid){
 			echo "Bid entry failed for " . $thisBid['netID'] . 
 				 " offered by " . $thisBid['fratID'];
 		} else {
-			echo "Success! " . $thisBid['netID'] . " - " . $thisBid['fratID'];
+			echo " Success! " . $thisBid['netID'] . " - " . $thisBid['fratID'];
 
 		}
+}
+/**
+ * ifcrush_bid_show_table -
+ **/
+function ifcrush_bid_show_table(){
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . "ifc_bid";
+		$query = "select * from $table_name";
+		$bids = $wpdb->get_results($table_name, $thisBid);
+		
+		echo "	<table>
+					<tr>
+						<th>NetID</th>
+						<th>FratID</th>
+						<th>Delete</th>
+					</tr>
+				";
+		foreach ($bids as $b) {
+			echo "	<tr>
+						<td>" . $b->NetID  . "</td>
+						<td>" . $b->FratID . "</td>
+						<td>
+							<form method=\"post\">
+								<input type=\"hidden\" name=\"NetID\"  value=\"" . $b->NetID  . "\">
+								<input type=\"hidden\" name=\"FratID\" value=\"" . $b->FratID . "\">
+								<input type=\"submit\" name=\"action\" value=\" deletebid\" \>
+							</form>
+						</td>
+					</tr>";
+		}
+		echo "</table>";		
+}
+/**
+ * ifcrush_bid_show_table -
+ **/
+function ifcrush_bid_show_table_admin(){
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . "ifc_bid";
+		$query = "select * from $table_name";
+		$bids = $wpdb->get_results($query);
+		
+		echo "	<table>
+					<tr>
+						<th>NetID</th>
+						<th>FratID</th>
+						<th>Delete</th>
+					</tr>
+				";
+		foreach ($bids as $b) {
+			echo "	<tr>
+						<td>" . $b->netID  . "</td>
+						<td>" . $b->fratID . "</td>
+						<td>
+							<form method=\"post\">
+								<input type=\"hidden\" name=\"NetID\"  value=\"" . $b->netID  . "\">
+								<input type=\"hidden\" name=\"FratID\" value=\"" . $b->fratID . "\">
+								<input type=\"submit\" name=\"action\" value=\"Delete " . $b->netID ." ". $b->fratID  . " \" \>
+							</form>
+						</td>
+					</tr>";
+		}		
+}
+
+function ifcrush_delete_bid ($thisbid){
+
+	global $wpdb;
+	
+	$table_name = $wpdb->prefix . "ifc_bid";
+	$rows_affected = $wpdb->delete( $table_name, $thisbid );	
+
+
+	if (0 == $rows_affected ) {
+		echo "Delete bid failed";
+	} else {
+		echo "Delete bid succeeded";
+	}
+
 }

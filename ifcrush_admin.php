@@ -6,6 +6,25 @@ function ifcrush_admin_menu() {
 	add_management_page( "IFC Rush PNM Dump", "IFC Rush PNM Dump", 'manage_options', 'ifcrush_pnm_dump', 'ifcrush_all_pnm_data');
 	add_management_page( "IFC Rush Data Summary", "IFC Rush Data Summary", 'manage_options', 'ifcrush_summary', 'ifcrush_data_summary');
 	add_management_page( "IFC Rush Class Reports", "IFC Rush Class Reports", 'manage_options', 'ifcrush_class', 'ifcrush_class_by_frat');
+	add_management_page( "IFC Rush Delete Bid", "IFC Rush Delete Bid", 'manage_options', 'ifcrush_dbid', 'ifcrush_delete_bids');
+}
+
+function ifcrush_delete_bids(){
+	if ( !current_user_can( 'manage_options' ) )  {
+		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+	}
+	
+	if ( isset( $_POST['action'] )) {
+		$thisbid = array( 
+				'netID'	=>  ( isset( $_POST['NetID'] ) ? $_POST['NetID']: ""),
+				'fratID' =>  ( isset( $_POST['FratID'] ) ? $_POST['FratID']: ""),
+		); // put the form input into an array
+
+		ifcrush_delete_bid ( $thisbid );
+	}
+	
+	ifcrush_bid_show_table_admin();
+
 }
 
 function ifcrush_class_by_frat(){
