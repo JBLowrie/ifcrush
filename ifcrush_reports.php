@@ -111,9 +111,10 @@ function ifcrush_create_frat_reports(){
  **/ 
 function ifcrush_create_frat_report( $frat_letters ) {	
 
-	$no_event_data = ! ifcrush_create_frat_report_pnms_event_title( $frat_letters );
-	$no_count_data = ! ifcrush_create_frat_report_pnms_event_count( $frat_letters );
+	//$no_event_data = ! ifcrush_create_frat_report_pnms_event_title( $frat_letters );
+	//$no_count_data = ! ifcrush_create_frat_report_pnms_event_count( $frat_letters );
 	$no_bid_data   = ! ifcrush_create_frat_report_pnms_bid_count  ( $frat_letters );
+	
 
 	if ( $no_event_data && $no_count_data && $no_bid_data) {
 		echo "<h3>No report data for $frat_letters</h3><div></div>";
