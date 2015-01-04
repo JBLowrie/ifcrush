@@ -158,21 +158,24 @@ function ifcrush_list_frats(){
 global $wpdb;	   
 	$allfrats = ifcrush_get_all_frats();
 
-	echo "<h3>List of Fraternities</h3>";
+	echo "<h3>List of Fraternities</h3><div>";
 	if ( $allfrats ) {
-		echo "<div>";
 		echo "<table>";
-		echo "<tr><th>Letters</th><th>Fullname</th><th></th></tr>";
+		echo "<tr><th>Letters</th><th>Fullname</th><th></th></tr>
+		";
 
 		foreach ( $allfrats as $thisfrat ){
 			$letters = $thisfrat->ifcrush_frat_letters;
 			$fullname = $thisfrat->ifcrush_frat_fullname;
-			echo "<tr><td>$letters</td><td>$fullname</td><td></td></tr>";
+			echo "<tr><td>$letters</td><td>$fullname</td><td></td></tr>
+			";
 		}	
-		echo "</table></div>";
+		echo "</table>
+		";
 	} else {
-		?><div>No Frats to list!</div><?php
+		echo "No Frats to list!";
 	}
+	echo "</div>";
 }
 
 function ifcrush_list_frats_and_events(){
