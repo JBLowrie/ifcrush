@@ -3,20 +3,36 @@
 function ifcrush_admin_menu() {
 	//add_management_page( $page_title, $menu_title, $capability, $menu_slug, $function );
 	add_management_page( "IFC Rush Tools", "IFC Rush Reports", 'manage_options', 'ifcrush_tool', 'ifcrush_admin_tools');
-	add_management_page( "IFC Rush Tools 2", "IFC Rush Bid Reports", 'manage_options', 'ifcrush_bid', 'ifcrush_bid_data');
+	add_management_page( "IFC Rush PNM dump", "IFC Rush PNM Data Dump", 'manage_options', 'ifcrush_pnm_dump', 'ifcrush_all_data');
+	add_management_page( "IFC Rush Data Summary", "IFC Rush Data Summary", 'manage_options', 'ifcrush_summary', 'ifcrush_data_summary');
 }
 
-function ifcrush_bid_data(){
+function ifcrush_data_summary(){
 	if ( !current_user_can( 'manage_options' ) )  {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
-	echo '<div class="wrap">';
-	echo '<div id="accordion">';
-	echo "<h3>Bid Data</h3>";
+	
+	echo "<div>
+	<h3>Bid Data</h3>";
+	
+	ifcrush_report_total_rushees();
+	ifcrush_report_rushees_by_residence();
+	ifcrush_report_rushees_by_school();
+	ifcrush_report_rushees_by_yog();
 
-		echo "<div>So here is more info</div>";
+	echo "</div>";
+
+}
+function ifcrush_all_data(){
+	if ( !current_user_can( 'manage_options' ) )  {
+		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+	}
+
+	echo "<h3>Bid Data</h3>";
+	ifcrush_report_dump_pnms();
+
 	echo '</div>';
-	echo '</div>';
+
 }
 
 function ifcrush_admin_tools() {
