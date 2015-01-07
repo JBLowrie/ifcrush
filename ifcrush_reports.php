@@ -396,7 +396,9 @@ function ifcrush_pnm_create_row($r){
 
 function query_PNMS_and_ALL_data(){
 	global $wpdb;
-		$bid_table_name 	= $wpdb->prefix . "ifc_bid";
+		
+	$bid_table_name 	= $wpdb->prefix . "ifc_bid";
+	$usermeta = $wpdb->usermeta;
 
 	$query_PNMS_and_ALL_data = "
 	select um1.user_id, 
@@ -409,20 +411,28 @@ function query_PNMS_and_ALL_data(){
 		fratID as bidstatus
 		from 
 			wp_usermeta as um1 
-			left join wp_usermeta as um2 on um1.user_id = um2.user_id 
-			left join wp_usermeta as um3 on um1.user_id = um3.user_id 
-			left join wp_usermeta as um4 on um1.user_id = um4.user_id 
-			left join wp_usermeta as um5 on um1.user_id = um5.user_id 
-			left join wp_usermeta as um6 on um1.user_id = um6.user_id 
-			left join wp_ifc_bid on netID = um1.meta_value
+			left join $usermeta as um2 on um1.user_id = um2.user_id 
+			left join $usermeta as um3 on um1.user_id = um3.user_id 
+			left join $usermeta as um4 on um1.user_id = um4.user_id 
+			left join $usermeta as um5 on um1.user_id = um5.user_id 
+			left join $usermeta as um6 on um1.user_id = um6.user_id 
+			left join $bid_table_name on netID = um1.meta_value
 		WHERE ( um1.meta_key LIKE 'ifcrush_netID' 
 			AND um2.meta_key LIKE 'last_name' 
 			AND um3.meta_key LIKE 'first_name' 
 			AND um4.meta_key LIKE 'ifcrush_residence' 
 			AND um5.meta_key LIKE 'ifcrush_yog' 
 			AND um6.meta_key LIKE 'ifcrush_school' )";
-	
-	return($query_PNMS_and_ALL_data);
+			
+	global $debug;
+	if ( $debug ) {
+		echo "The big query is $query";
+		echo "<pre>";
+			print_r( $query_PNMS_and_ALL_data );
+		echo "</pre>";
+	}
+		
+	return( $query_PNMS_and_ALL_data );
 }
 
 
